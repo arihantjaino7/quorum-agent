@@ -18,6 +18,11 @@ updates this file first and records the change in the Changes block below.
 Every change so far is **additive**: nothing below the base contract was renamed or removed, and
 a frontend built only against v1.0 keeps working.
 
+### v1.3 (2026-10-31): progress events (Phase 3)
+| Where | Change |
+|---|---|
+| `AgentEvent.type` | + `"agent_progress"`: an agent is still working but has news, e.g. "Waiting for Groq rate limit (11s)…". It arrives between that agent's `agent_start` and `agent_end`. Show it as a status line under the running agent; it is never terminal. Clients that ignore unknown types still work. |
+
 ### v1.2 (2026-10-31): run lifecycle (Phase 2)
 | Where | Change |
 |---|---|
@@ -126,7 +131,7 @@ type ReviewPayload = {
 };
 
 type AgentEvent = {
-  type: "agent_start" | "agent_end" | "review_ready" | "error";
+  type: "agent_start" | "agent_progress" | "agent_end" | "review_ready" | "error";   // agent_progress: v1.3
   agent: AgentName;
   message: string;          // human sentence for the trace UI: "Found 3 conflicts with past decisions"
   payload?: any;            // review_ready → ReviewPayload; error → { failed_agent, retryable };
@@ -213,6 +218,7 @@ Lifecycle of one run (v1.2):
 ```
 agent_start pipeline                    "Run started for Investor sync debrief"
 agent_start/agent_end × 5               normalizer, extractor, memory_retriever, conflict_detector, ripple
+  (agent_progress may appear between an agent's start and end, e.g. "Waiting for Groq rate limit (11s)…")
 review_ready pipeline   payload: ReviewPayload        ← run pauses here for the human
    …the stream stays open…
    approve → agent_start/agent_end × 2  executor, memory_writer
