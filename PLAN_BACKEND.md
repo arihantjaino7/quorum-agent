@@ -53,7 +53,7 @@ scaffold (health route, empty agent/service/integration modules, Pydantic contra
 golden expectations, and the self-enabling golden test.
 **Test:** `pytest -q` → 13 pass, 6 golden checks skip until their agents exist.
 
-### Phase 1: Data layer + demo controls
+### ✅ Phase 1: Data layer + demo controls (done)
 - **Build:** SQLModel tables (Project, Meeting, Decision, Task, Conflict, Run, Setting, Embedding), `db.py`,
   demo clock in Settings (`services/clock.now()` used everywhere), `seed/meeting1.json` (meeting 1's
   structured output, hand-checked, loaded with **no LLM** so reset is instant and deterministic),
@@ -166,7 +166,7 @@ golden expectations, and the self-enabling golden test.
 
 ---
 
-## Stretch features (after Phase 15, if time)
+## Stretch features (after Phase 15, if time). Tracked in IDEAS.md
 | Idea | Why a PM cares | Effort |
 |---|---|---|
 | **Absent-stakeholder alert**: a decision affects someone who wasn't in the meeting → auto heads-up | the "nobody told me" problem | S |

@@ -1,13 +1,15 @@
 """FastAPI entrypoint. Run with: uvicorn app.main:app --reload --port 8000"""
 
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
-from app.api import health
+from app.api import clock, decisions, demo, directory, health, tasks
 from app.config import get_settings
+from app.db import init_db
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("quorum")
@@ -27,8 +29,16 @@ def _log_integrations() -> None:
     log.info("replay mode: %s", "ON" if s.replay_active else "off")
 
 
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    init_db()
+    _log_integrations()
+    yield
+
+
 def create_app() -> FastAPI:
     app = FastAPI(
+        lifespan=lifespan,
         title="Quorum",
         version=__version__,
         docs_url="/api/docs",
@@ -42,8 +52,8 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    app.include_router(health.router, prefix="/api")
-    _log_integrations()
+    for module in (health, demo, clock, directory, decisions, tasks):
+        app.include_router(module.router, prefix="/api")
     return app
 
 

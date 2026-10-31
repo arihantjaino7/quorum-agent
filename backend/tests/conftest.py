@@ -1,11 +1,17 @@
 import json
 import os
+import tempfile
 from pathlib import Path
 
 import pytest
 
-# Tests always run on replay recordings, never on live Groq (unless marked `live`).
-os.environ.setdefault("DEMO_REPLAY", "1")
+# Tests always run on replay recordings, never on live Groq (unless marked `live`),
+# on a throwaway database, and with no integration keys (whatever is in the developer's .env).
+os.environ["DEMO_REPLAY"] = "1"
+os.environ["DATABASE_URL"] = f"sqlite:///{Path(tempfile.mkdtemp(prefix='quorum-test-')) / 'test.db'}"
+for _key in ("GROQ_API_KEY", "NOTION_TOKEN", "NOTION_DATABASE_ID", "GITHUB_TOKEN", "GITHUB_REPO",
+             "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"):
+    os.environ[_key] = ""
 
 SEED_DIR = Path(__file__).resolve().parent.parent / "seed"
 
@@ -18,6 +24,13 @@ def client():
 
     with TestClient(app) as c:
         yield c
+
+
+@pytest.fixture
+def fresh(client):
+    """Reset to the demo starting state before a test."""
+    assert client.post("/api/demo/reset").status_code == 200
+    return client
 
 
 @pytest.fixture(scope="session")

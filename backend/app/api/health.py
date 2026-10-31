@@ -1,20 +1,22 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlmodel import Session
 
 from app import __version__
 from app.config import get_settings
+from app.db import get_session
+from app.services import clock
 
 router = APIRouter(tags=["health"])
 
 
 @router.get("/health")
-def health() -> dict:
+def health(session: Session = Depends(get_session)) -> dict:
     s = get_settings()
     return {
         "ok": True,
         "version": __version__,
         "replay": s.replay_active,
-        # Phase 1 moves the demo clock into the settings table; until then it is the configured start.
-        "clock": s.demo_clock_start,
+        "clock": clock.fmt(clock.now(session)),
         "integrations": {
             "groq": s.groq_enabled,
             "notion": s.notion_enabled,

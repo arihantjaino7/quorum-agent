@@ -1,0 +1,63 @@
+{
+  "_comment": "Hand-checked structured output of meeting1.txt, loaded by /api/demo/reset with no LLM. Quotes are exact spans of meeting1.txt (enforced by tests).",
+  "project": "Pocket",
+  "meeting": {
+    "id": "mtg_m1",
+    "title": "Pocket v1 planning sync",
+    "date": "2026-10-24",
+    "speaker": "Priya",
+    "source_type": "transcript"
+  },
+  "decisions": [
+    {
+      "id": "dec_m1_platform",
+      "topic_key": "platform_scope",
+      "statement": "v1 is iOS only; Android moves to v2",
+      "made_by": "Priya",
+      "rationale": "Three engineers; doing Android at the same time doubles QA, and early users skew iPhone",
+      "source_quote": "Decision: v1 is iOS only. Android moves to v2."
+    },
+    {
+      "id": "dec_m1_launch",
+      "topic_key": "launch_date",
+      "statement": "Public launch is 20 Nov 2026",
+      "made_by": "Priya",
+      "rationale": "Realistic if scope is frozen this week (Rahul)",
+      "source_quote": "Let's commit to it. Public launch is November 20th."
+    },
+    {
+      "id": "dec_m1_payments",
+      "topic_key": "payments_provider",
+      "statement": "Payments via Razorpay, not Stripe",
+      "made_by": "Priya",
+      "rationale": "Most users pay with UPI; Razorpay handles UPI natively with lower fees in India",
+      "source_quote": "Then it's Razorpay, not Stripe, for payments."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "tsk_m1_onboarding",
+      "title": "Design onboarding screens",
+      "owner": "Ananya",
+      "due_date": "2026-11-03",
+      "raw_due_phrase": "by November 3rd",
+      "source_quote": "I'll have the onboarding screens done by November 3rd."
+    },
+    {
+      "id": "tsk_m1_testflight",
+      "title": "Ship TestFlight build to the beta group",
+      "owner": "Rahul",
+      "due_date": "2026-11-10",
+      "raw_due_phrase": "by November 10th",
+      "source_quote": "I'll get a TestFlight build out to the beta group by November 10th."
+    },
+    {
+      "id": "tsk_m1_landing",
+      "title": "Write landing page copy",
+      "owner": "Priya",
+      "due_date": "2026-11-06",
+      "raw_due_phrase": "by November 6th",
+      "source_quote": "I'll write the landing page copy by November 6th."
+    }
+  ]
+}
