@@ -43,6 +43,8 @@ class TaskOut(BaseModel):
     due_date: str | None = Field(description="ISO date YYYY-MM-DD resolved against the meeting date; null if none")
     raw_due_phrase: str = Field(description="The deadline words exactly as said; empty string if none")
     source_quote: str = Field(description="Exact span from the ORIGINAL WORDS")
+    depends_on_topic: str | None = Field(description="topic_key of a decision from this debrief that this task exists "
+                                                     "because of; null if the task stands on its own")
 
 
 class ExtractorOut(BaseModel):
@@ -68,6 +70,8 @@ Tasks:
 - due_date: resolve against the meeting date and calendar below. "Next <weekday>" = first such weekday after
   the meeting date; a bare weekday = the next one after the meeting date; "the 20th" = next 20th on or after
   the meeting date. raw_due_phrase keeps the spoken words, fillers included (e.g. "by, uh, next Wednesday").
+- depends_on_topic: if the task only makes sense because of one of the decisions you extracted (e.g. redoing
+  onboarding for Android exists because of the platform decision), give that decision's topic_key; else null.
 - source_quote must be copied exactly from the text."""
 
 
@@ -160,6 +164,8 @@ def postprocess(out: ExtractorOut, *, raw_text: str, meeting: dict, people: list
             "meeting_id": meeting["id"],
             "tracker_url": None,
             "reminder_sent": False,
+            # Internal link used on approve ("keep previous" drops dependent tasks). Not part of the wire contract.
+            "decision_id": next((d["id"] for d in decisions if d["topic_key"] == _slug(t.depends_on_topic or "")), None),
         }
         tasks.append(task)
         if not task["owner"]:

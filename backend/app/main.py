@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
 from app import pipeline
-from app.api import clock, decisions, demo, directory, health, runs, tasks
+from app.api import clock, decisions, demo, directory, health, insights, runs, tasks
 from app.config import get_settings
 from app.db import init_db
 from app.integrations import llm
@@ -56,7 +56,7 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    for module in (health, demo, clock, directory, decisions, tasks, runs):
+    for module in (health, demo, clock, directory, insights, decisions, tasks, runs):
         app.include_router(module.router, prefix="/api")
     return app
 

@@ -52,6 +52,7 @@ class RunState(TypedDict, total=False):
     heads_up: list[dict]
     related: dict  # memory_retriever output: new decision id → past decisions
     review_action: dict  # resume value: {"action": "approve"|"reject"|"edit", ...}
+    changes: list[str]  # review_editor output: what the last spoken edit changed
     result: dict  # executor + memory_writer output, returned by /approve
 
 

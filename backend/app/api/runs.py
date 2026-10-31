@@ -3,7 +3,7 @@ from sse_starlette.sse import EventSourceResponse
 
 from app import pipeline
 from app.ids import new_id
-from app.schemas import ApproveRequest, IngestRequest
+from app.schemas import ApproveRequest, IngestRequest, VoiceEditRequest
 from app.services import clock, runs
 
 router = APIRouter(tags=["runs"])
@@ -79,6 +79,21 @@ async def approve(thread_id: str, body: ApproveRequest) -> dict:
         raise HTTPException(status_code=409, detail=str(e)) from None
     except RuntimeError as e:
         raise HTTPException(status_code=502, detail=str(e)) from None
+
+
+@router.post("/runs/{thread_id}/voice-edit")
+async def voice_edit(thread_id: str, body: VoiceEditRequest) -> dict:
+    if not body.instruction.strip():
+        raise HTTPException(status_code=422, detail="instruction is empty")
+    try:
+        review, changes = await pipeline.edit(thread_id, body.instruction.strip())
+    except KeyError:
+        raise _not_found(thread_id) from None
+    except pipeline.RunConflict as e:
+        raise HTTPException(status_code=409, detail=str(e)) from None
+    except RuntimeError as e:
+        raise HTTPException(status_code=502, detail=str(e)) from None
+    return {"review": review.model_dump(), "changes": changes}
 
 
 @router.post("/runs/{thread_id}/reject")

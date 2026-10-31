@@ -179,6 +179,19 @@ async def approve(thread_id: str, resolutions: dict, ripple_actions: dict) -> di
     return {**EMPTY_RESULT, **(values.get("result") or {})}
 
 
+async def edit(thread_id: str, instruction: str) -> tuple[ReviewPayload, list[str]]:
+    """Apply a spoken edit to a pending review. The run pauses at review again with the edited state."""
+    status = _status(thread_id)
+    if status is None:
+        raise KeyError(thread_id)
+    if not _set_status(thread_id, "running", only_if="review"):
+        raise RunConflict(f"run is {status}, not awaiting review")
+    values = await _drive(thread_id, Command(resume={"action": "edit", "instruction": instruction}))
+    if values is None:
+        raise RuntimeError("the edit failed; see the run stream, then POST /retry")
+    return review_payload(values), list(values.get("changes") or [])
+
+
 async def reject(thread_id: str) -> None:
     _claim(thread_id, "rejected")
     await _drive(thread_id, Command(resume={"action": "reject"}))
