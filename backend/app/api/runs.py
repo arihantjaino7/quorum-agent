@@ -1,10 +1,10 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from sse_starlette.sse import EventSourceResponse
 
 from app import pipeline
 from app.ids import new_id
 from app.schemas import ApproveRequest, IngestRequest, VoiceEditRequest
-from app.services import clock, runs
+from app.services import clock, ingest_parsing, runs
 
 router = APIRouter(tags=["runs"])
 
@@ -13,36 +13,78 @@ def _not_found(thread_id: str) -> HTTPException:
     return HTTPException(status_code=404, detail=f"run {thread_id} not found")
 
 
-@router.post("/ingest")
-async def ingest(body: IngestRequest) -> dict:
-    if not body.text.strip():
+def _start(project: str, title: str, date: str, speaker: str, source_type: str, text: str) -> dict:
+    if not text.strip():
         raise HTTPException(status_code=422, detail="text is empty")
-    if not body.project.strip():
+    if not project.strip():
         raise HTTPException(status_code=422, detail="project is empty")
     try:
-        meeting_date = clock.parse(body.date).date().isoformat()
+        meeting_date = clock.parse(date).date().isoformat()
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
 
     thread_id = new_id("run")
     meeting = {
         "id": new_id("mtg"),
-        "project": body.project.strip(),
-        "title": body.title.strip() or "Untitled meeting",
+        "project": project.strip(),
+        "title": title.strip() or "Untitled meeting",
         "date": meeting_date,
-        "speaker": body.speaker.strip(),
-        "source_type": body.source_type,
+        "speaker": speaker.strip(),
+        "source_type": source_type,
     }
     initial_state = {
         "thread_id": thread_id,
         "meeting": meeting,
-        "raw_text": body.text,
-        "clean_text": body.text,  # the normalizer replaces this; stubs pass it through
+        "raw_text": text,
+        "clean_text": text,  # the normalizer replaces this; stubs pass it through
         "corrections": [], "decisions": [], "tasks": [], "conflicts": [],
         "questions": [], "ripples": [], "heads_up": [], "related": {}, "result": {},
     }
     pipeline.start(thread_id, meeting["project"], initial_state)
     return {"thread_id": thread_id}
+
+
+@router.post("/ingest")
+async def ingest(body: IngestRequest) -> dict:
+    return _start(body.project, body.title, body.date, body.speaker, body.source_type, body.text)
+
+
+AUDIO_TYPES = (".mp3", ".m4a", ".wav", ".webm")
+
+
+async def _transcribe(name: str, data: bytes) -> str:
+    """Speech to text with Groq Whisper (the key may be injected by the network proxy)."""
+    import httpx
+
+    from app.config import get_settings
+    from app.integrations import llm
+
+    if not llm.available():
+        raise HTTPException(status_code=422, detail="Audio needs Groq: set GROQ_API_KEY, or paste the transcript instead.")
+    s = get_settings()
+    try:
+        async with httpx.AsyncClient(timeout=120) as client:
+            r = await client.post("https://api.groq.com/openai/v1/audio/transcriptions",
+                                  headers={"Authorization": f"Bearer {s.groq_api_key or llm.PROXY_PLACEHOLDER_KEY}"},
+                                  data={"model": s.groq_model_whisper, "response_format": "json"},
+                                  files={"file": (name, data)})
+        r.raise_for_status()
+        return r.json()["text"]
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Transcription failed ({type(e).__name__}). Try again or paste the text.") from e
+
+
+@router.post("/ingest/file")
+async def ingest_file(file: UploadFile = File(...), project: str = Form(...), title: str = Form(""), date: str = Form(...),
+                      speaker: str = Form(...), source_type: str = Form("transcript")) -> dict:
+    name, data = file.filename or "upload", await file.read()
+    if name.lower().endswith(AUDIO_TYPES):
+        return _start(project, title, date, speaker, "audio", await _transcribe(name, data))
+    try:
+        parsed = ingest_parsing.parse_file(name, data)
+    except ingest_parsing.UnsupportedFormat as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    return _start(project, title, date, speaker, "transcript", parsed.text)
 
 
 @router.get("/runs/{thread_id}/stream")

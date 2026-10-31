@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, Check, CircleAlert, GitFork, Quote, Sparkles } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
+import { ArrowRight, AudioLines, Check, CircleAlert, GitFork, LoaderCircle, Quote, Send, Sparkles, Waves } from 'lucide-react'
 import { Avatar } from '@/components/shared'
-import type { AgentEvent, AgentName, Conflict, Decision, Resolution, ReviewPayload, Task } from '@/types'
+import type { AgentEvent, AgentName, Conflict, Decision, Resolution, ReviewPayload, Ripple, Task } from '@/types'
 import { markTranscript, shortDate, topicLabel } from './marks'
 import { Appear, CountUp, RiseOnView, Strike, Typewriter } from './motion'
 import { EASE, type STEPS } from './constants'
@@ -111,8 +113,48 @@ function Transcript({ review }: { review: ReviewPayload }) {
   })}</p>
 }
 
-export function Results({ review, resolutions, onResolve, locked }: {
+const RIPPLE_WORD: Record<Ripple['kind'], string> = { reschedule: 'Move date', rescope: 'Rescope', cancel: 'Cancel', unowned_work: 'Needs an owner' }
+const EXAMPLES = ['Make Rahul’s Play Store date the 18th', 'Drop the investor update', 'Assign the investor update to Ananya']
+
+function RippleRow({ ripple, on, disabled, onToggle }: { ripple: Ripple; on: boolean; disabled: boolean; onToggle: (apply: boolean) => void }) {
+  const p = ripple.proposal
+  return <label className={`ripple-row ${disabled ? 'is-off' : ''} ${on ? 'is-on' : ''}`}>
+    <input type="checkbox" checked={on && !disabled} disabled={disabled} onChange={(e) => onToggle(e.target.checked)} />
+    <span className="ripple-check"><Check size={13} strokeWidth={3} /></span>
+    <span className="ripple-kind">{RIPPLE_WORD[ripple.kind]}</span>
+    <div className="ripple-body">
+      <strong>{ripple.task?.title ?? 'New work with no owner'}</strong>
+      <p>{disabled ? 'You kept the previous decision, so this will be skipped.' : ripple.reason}</p>
+      {!disabled && (p.due_date || p.title) && <span className="ripple-to"><ArrowRight size={12} />{p.due_date && ripple.task?.due_date ? `${shortDate(ripple.task.due_date)} → ${shortDate(p.due_date)}` : p.title}</span>}
+    </div>
+    {ripple.task?.owner && <Avatar name={ripple.task.owner} small />}
+  </label>
+}
+
+function VoiceEdit({ onEdit, editing, changes, error }: { onEdit: (text: string) => void; editing: boolean; changes: string[]; error: string | null }) {
+  const [text, setText] = useState('')
+  const send = (value: string) => { if (value.trim() && !editing) { onEdit(value.trim()); setText('') } }
+  return <section className="block voice-edit">
+    <div className="block-head"><h2><RiseOnView>Change anything, just say it.</RiseOnView></h2>
+      <p>Hold Wispr and tell Quorum what to fix. It edits the review and shows you exactly what changed.</p></div>
+    <Appear className="edit-card">
+      <form onSubmit={(e) => { e.preventDefault(); send(text) }}>
+        <span className="edit-icon"><AudioLines size={18} /></span>
+        <input value={text} onChange={(e) => setText(e.target.value)} placeholder="“Make Rahul’s date the 18th and drop the investor update”" aria-label="Tell Quorum what to change" />
+        <button type="submit" className="run-btn small" disabled={!text.trim() || editing}>{editing ? <LoaderCircle size={15} className="spin" /> : <Send size={15} />}Apply</button>
+      </form>
+      <div className="edit-examples">{EXAMPLES.map((e) => <button type="button" key={e} onClick={() => send(e)} disabled={editing}>{e}</button>)}</div>
+      {error && <p className="error-line" role="alert">{error}</p>}
+      {changes.length > 0 && <motion.ul className="edit-changes" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
+        {changes.map((c, i) => <li key={i}><Check size={14} />{c}</li>)}</motion.ul>}
+    </Appear>
+  </section>
+}
+
+export function Results({ review, resolutions, onResolve, locked, rippleActions, onRipple, onEdit, editing, changes, editError }: {
   review: ReviewPayload; resolutions: Record<string, Resolution>; onResolve: (id: string, r: Resolution) => void; locked: boolean
+  rippleActions: Record<string, 'apply' | 'skip'>; onRipple: (id: string, action: 'apply' | 'skip') => void
+  onEdit: (text: string) => void; editing: boolean; changes: string[]; editError: string | null
 }) {
   return <div className="results">
     <Stats review={review} />
@@ -124,6 +166,23 @@ export function Results({ review, resolutions, onResolve, locked }: {
       </div>
       <div className="collisions">{review.conflicts.map((c, i) => <Collision key={c.id} conflict={c} review={review} index={i} locked={locked}
         resolution={resolutions[c.id]} onResolve={(r) => onResolve(c.id, r)} />)}</div>
+    </section>}
+
+    {review.ripples.length > 0 && <section className="block ripple">
+      <div className="block-head"><h2><RiseOnView>And here’s what that changes.</RiseOnView></h2>
+        <p>Quorum traced each change into work already underway. Switch off anything you don’t want applied.</p></div>
+      <Appear className="card ripple-card">
+        {review.ripples.map((r) => {
+          const off = Boolean(r.conflict_id && resolutions[r.conflict_id] === 'keep_old')
+          return <RippleRow key={r.id} ripple={r} disabled={off || locked} on={(rippleActions[r.id] ?? r.default_action) === 'apply'}
+            onToggle={(apply) => onRipple(r.id, apply ? 'apply' : 'skip')} />
+        })}
+      </Appear>
+      {review.heads_up.length > 0 && <div className="heads-up">
+        <span className="card-label"><Waves size={13} />Heads-ups ready to send <b>{review.heads_up.length}</b></span>
+        <div className="heads-grid">{review.heads_up.map((h, i) => <Appear key={h.person} delay={i * 0.08} className="card note">
+          <span className="side-by"><Avatar name={h.person} small />{h.person}</span><ReactMarkdown>{h.message_md}</ReactMarkdown></Appear>)}</div>
+      </div>}
     </section>}
 
     <section className="block forward">
@@ -159,5 +218,7 @@ export function Results({ review, resolutions, onResolve, locked }: {
         </Appear>
       </div>
     </section>
+
+    {!locked && <VoiceEdit onEdit={onEdit} editing={editing} changes={changes} error={editError} />}
   </div>
 }

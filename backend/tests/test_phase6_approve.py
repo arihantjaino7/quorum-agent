@@ -137,3 +137,18 @@ def test_read_side_after_approval(fresh, review):
     sent = fresh.post("/api/reminders/run").json()["sent"]
     assert sent and all(s["channel"] == "log" for s in sent)
     assert fresh.post("/api/reminders/run").json()["sent"] == []  # once per task
+
+
+def test_file_upload_parses_a_vtt_and_runs_the_pipeline(fresh):
+    from pathlib import Path
+
+    vtt = (Path(__file__).resolve().parent.parent / "seed" / "samples" / "meeting1.vtt").read_bytes()
+    r = fresh.post("/api/ingest/file", files={"file": ("meeting1.vtt", vtt)},
+                   data={"project": "Pocket", "title": "Planning sync", "date": "2026-10-24", "speaker": "Priya"})
+    assert r.status_code == 200 and r.json()["thread_id"].startswith("run_")
+    bad = fresh.post("/api/ingest/file", files={"file": ("notes.docx", b"x")},
+                     data={"project": "Pocket", "title": "t", "date": "2026-10-24", "speaker": "Priya"})
+    assert bad.status_code == 422 and ".vtt" in bad.json()["detail"]
+    audio = fresh.post("/api/ingest/file", files={"file": ("call.mp3", b"x")},
+                       data={"project": "Pocket", "title": "t", "date": "2026-10-24", "speaker": "Priya"})
+    assert audio.status_code == 422  # no Groq in tests

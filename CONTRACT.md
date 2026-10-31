@@ -15,6 +15,12 @@ updates this file first and records the change in the Changes block below.
 
 ## Changes
 
+- **v1.4 (31 Oct, additive):** `GET /api/runs/{id}/stream?until=review` ends the stream at `review_ready` or `error`
+  (default unchanged: stays open). `POST /api/ingest/file` is implemented: `.txt/.md/.vtt/.srt` are parsed into
+  speaker-attributed text (`source_type` becomes `transcript`), audio goes through Groq Whisper (422 if Groq is
+  unavailable, 502 if transcription fails). `voice-edit`, `brief`, `radar`, `digest`, `ask`, `reminders/run`,
+  `decisions/as-of` and `decisions/timeline` are live. `ReviewPayload` and the wire types are unchanged.
+
 Every change so far is **additive**: nothing below the base contract was renamed or removed, and
 a frontend built only against v1.0 keeps working.
 

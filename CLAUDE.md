@@ -68,6 +68,16 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
   medium, overload = low. Affected tasks are picked by the agent from the project's open tasks.
 - Deadline collision = a task due after the newest launch/release date decision, or a new task due before the meeting
   date. Overload = 3+ tasks for one owner on one day, counting new and existing open tasks (flagged only if a new task is involved).
+- **Approve path (Phase 6, user decisions 31 Oct):** "keep previous" drops the new decision AND the new tasks that depend
+  on it (the extractor marks each task's `depends_on_topic`; stored internally as `decision_id`, not in the wire contract).
+  A meeting enters memory only on approve. A task with an open owner/date question is still created (unassigned/undated).
+  A tracker failure falls back Notion → GitHub → local (`tracker_url` null) and never blocks the approve. A new decision
+  that only repeats an active one on the same topic (no reversal found) is skipped ("confirms existing").
+- **Delegated to Claude (user: "do whatever you think is good", 31 Oct):** ripple, brief, digest, radar, time machine and
+  ask are **deterministic** (no model call), so they work offline and need no recordings; ripple proposes a date shift
+  (same number of days a moved date moved) or a rescope for the tasks the conflict agent marked as affected. Voice edit
+  uses the strong model to return structured operations that Python applies. Reminders cover open tasks due within 24h of
+  the demo clock (or late) and send once per task. Embeddings load from the local cache before any network call.
 - Retrieval = same `topic_key` ∪ top embedding matches. If embeddings are unavailable it degrades to `topic_key` only.
 
 ## Hackathon

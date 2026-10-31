@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRight, ArrowUpRight, AudioLines, BrainCircuit, CheckCheck, LoaderCircle, Moon, RotateCcw, ShieldCheck, Sun } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, AudioLines, BrainCircuit, CheckCheck, FileUp, LoaderCircle, Moon, RotateCcw, ShieldCheck, Sun } from 'lucide-react'
 import Lenis from 'lenis'
 import 'lenis/dist/lenis.css'
 import './home.css'
@@ -46,6 +46,9 @@ export default function Home() {
   const [failure, setFailure] = useState<{ message: string; retryable: boolean } | null>(null)
   const [resolutions, setResolutions] = useState<Record<string, Resolution>>({})
   const [outcome, setOutcome] = useState<ApproveResult | null>(null)
+  const [rippleActions, setRippleActions] = useState<Record<string, 'apply' | 'skip'>>({})
+  const [changes, setChanges] = useState<string[]>([])
+  const fileInput = useRef<HTMLInputElement>(null)
   const [unlocked, setUnlocked] = useState(readUnlocked)
   const lenis = useRef<Lenis | null>(null)
   const typing = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -103,16 +106,25 @@ export default function Home() {
     return () => timers.forEach(clearTimeout)
   }, [phase, scrollTo])
 
+  const started = ({ thread_id }: { thread_id: string }) => {
+      try { localStorage.setItem('quorum-last-run', thread_id) } catch { /* reachable by URL too */ }
+      setEvents([]); setReview(null); setFailure(null); setResolutions({}); setOutcome(null); setRippleActions({}); setChanges([])
+      setThreadId(thread_id); setPhase('running')
+    }
   const ingest = useMutation({
     mutationFn: () => api.ingest({ project: 'Pocket', title: usedSample ? SAMPLE_TITLE : 'Voice debrief', date: today, speaker, source_type: 'voice', text: text.trim() }),
-    onSuccess: ({ thread_id }) => {
-      try { localStorage.setItem('quorum-last-run', thread_id) } catch { /* reachable by URL too */ }
-      setEvents([]); setReview(null); setFailure(null); setResolutions({}); setOutcome(null)
-      setThreadId(thread_id); setPhase('running')
-    },
+    onSuccess: started,
+  })
+  const upload = useMutation({
+    mutationFn: (file: File) => api.ingestFile({ project: 'Pocket', title: file.name.replace(/\.[^.]+$/, ''), date: today, speaker, source_type: 'transcript', file }),
+    onSuccess: started,
+  })
+  const edit = useMutation({
+    mutationFn: (instruction: string) => api.voiceEdit(threadId!, instruction),
+    onSuccess: (result) => { setReview(result.review); setChanges(result.changes) },
   })
   const approve = useMutation({
-    mutationFn: () => api.approve(threadId!, { resolutions }),
+    mutationFn: () => api.approve(threadId!, { resolutions, ripple_actions: rippleActions }),
     onSuccess: (result) => { setOutcome(result); setPhase('approved'); setUnlocked(true); writeUnlocked(true); void client.invalidateQueries({ queryKey: ['quorum'] }) },
   })
   const reject = useMutation({
@@ -135,7 +147,7 @@ export default function Home() {
   function submit() { if (text.trim() && !ingest.isPending && !typing.current) ingest.mutate() }
   function startOver() {
     setPhase('idle'); setThreadId(null); setText(''); setUsedSample(false); setEvents([]); setReview(null)
-    setFailure(null); setResolutions({}); setOutcome(null)
+    setFailure(null); setResolutions({}); setOutcome(null); setRippleActions({}); setChanges([])
     if (lenis.current) lenis.current.scrollTo(0, { duration: 1.2 }); else window.scrollTo({ top: 0, behavior: 'smooth' })
     setTimeout(() => input.current?.focus(), 900)
   }
@@ -213,6 +225,12 @@ export default function Home() {
           <span className="sample-dot" />No mic handy? <b>Play the sample debrief</b><ArrowRight size={14} />
         </motion.button>}</AnimatePresence>
 
+        <input ref={fileInput} type="file" accept=".txt,.md,.vtt,.srt,.mp3,.m4a,.wav,.webm" hidden aria-label="Upload a transcript"
+          onChange={(e) => { const f = e.target.files?.[0]; if (f) upload.mutate(f); e.target.value = '' }} />
+        <button type="button" className="upload-link" disabled={upload.isPending} onClick={() => fileInput.current?.click()}>
+          {upload.isPending ? <LoaderCircle size={14} className="spin" /> : <FileUp size={14} />}Or upload a transcript or recording (.txt .vtt .srt .mp3)</button>
+        {upload.error && <p className="error-line" role="alert">{errorMessage(upload.error)}</p>}
+
         <div className="how">{HOW.map((h, i) => <motion.div key={h.title} className="how-step" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.7 + i * 0.12, duration: 0.7, ease: EASE }}>
           <span className="how-icon"><h.icon size={16} /></span><div><strong>{h.title}</strong><p>{h.body}</p></div>
@@ -236,7 +254,9 @@ export default function Home() {
 
     {/* 3 · Results. */}
     {review && <div ref={resultsRef} className="results-wrap">
-      <Results review={review} resolutions={resolutions} locked={phase !== 'review'} onResolve={(id, r) => setResolutions((all) => ({ ...all, [id]: r }))} />
+      <Results review={review} resolutions={resolutions} locked={phase !== 'review'} onResolve={(id, r) => setResolutions((all) => ({ ...all, [id]: r }))}
+        rippleActions={rippleActions} onRipple={(id, a) => setRippleActions((all) => ({ ...all, [id]: a }))}
+        onEdit={(text) => edit.mutate(text)} editing={edit.isPending} changes={changes} editError={edit.error ? errorMessage(edit.error) : null} />
     </div>}
 
     {/* 4 · Approved: the seal, then the workspace opens up. */}

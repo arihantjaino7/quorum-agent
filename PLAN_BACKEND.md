@@ -119,14 +119,14 @@ Known bugs from the 31 Oct live check:
 6. The floating approve bar covers transcript text.
 7. Giant hero headers push the actual work below the fold on every page.
 
-### Phase 6: Approve path: memory writer + executor
+### ✅ Phase 6: Approve path: memory writer + executor (done 31 Oct)
 - **Build:** memory writer (persist approved decisions + embeddings; `superseded_by` lineage; `keep_old` drops
   the new decision); executor: Notion → GitHub Issues → local-only, each with one clear log line when skipped.
 - **Proves:** confirmation → real tracker writes, and memory updates correctly for the next meeting.
 - **Test:** approve → 3 supersede edges in `/decisions/graph`; `keep_old` keeps the old one active; with no
   keys, tasks are created with `tracker_url: null` and nothing crashes; Notion/GitHub are mocked with httpx mock.
 
-### Phase 7: Ripple Effect ⭐
+### ✅ Phase 7: Ripple Effect ⭐ (done 31 Oct)
 - **Build:** a `ripple` node: for each reversal, find open tasks linked to the old decision (by meeting + topic +
   embedding similarity) and have the LLM propose `reschedule | rescope | cancel` with a reason; flag
   `unowned_work` (implied by the new decision, no owner); write a per-person `HeadsUp`. On approve, apply the
@@ -135,48 +135,48 @@ Known bugs from the 31 Oct live check:
 - **Test:** golden "Ananya onboarding → rescope" green; skipping a ripple leaves the task untouched; `keep_old`
   suppresses its ripples.
 
-### Phase 8: Voice edit
+### ✅ Phase 8: Voice edit (done 31 Oct)
 - **Build:** the review editor turns a spoken instruction into a structured patch (set field, remove item,
   resolve conflict, add task), applied to the checkpointed state, plus human-readable `changes`.
 - **Test:** "approve all but make Rahul's deadline the 18th" → Play Store due 2026-11-18, one change line;
   "drop the investor update" removes that task; nonsense instructions → no changes plus a clear message.
 
-### Phase 9: Ask your meetings
+### ✅ Phase 9: Ask your meetings (done 31 Oct)
 - **Build:** retrieve decisions, quotes, and superseded lineage → strong model answers with citations
   constrained to the retrieved quotes (no citation without a source).
 - **Test:** "why did we drop Razorpay?" → cites the 31 Oct debrief quote about KYC; an unknown topic → "No
   meeting covers that yet."
 
-### Phase 10: Reminders + Telegram + demo clock
+### ✅ Phase 10: Reminders + Telegram + demo clock (done 31 Oct)
 - **Build:** an APScheduler interval job plus `POST /api/reminders/run`: open tasks due within 24h of the
   **demo clock**, sent once (`reminder_sent`). Telegram via httpx; a log line when not configured.
 - **Test:** clock → 2026-11-03T10:00 → Ananya's 4 Nov task is reminded; running again sends nothing new.
 
-### Phase 11: Weekly digest
+### ✅ Phase 11: Weekly digest (done 31 Oct)
 - **Build:** per person: done / due / overdue / decisions that touched them / open conflicts →
   `summary_md` in a chief-of-staff voice (short, opinionated, names the one thing that matters).
 - **Test:** Rahul's digest for week of 2 Nov lists the Play Store and TestFlight tasks and flags the
   Android reversal; the replayed summary stays under 120 words.
 
-### Phase 12: Decision Time Machine + Flip-flop Radar
+### ✅ Phase 12: Decision Time Machine + Flip-flop Radar (done 31 Oct)
 - **Build:** pure Python over the lineage: `/decisions/as-of`, `/decisions/timeline`, `/radar`
   (versions, flips, churn, risk, note).
 - **Test:** as of 2026-10-25 → iOS only / 20 Nov / Razorpay; as of 2026-11-01 → the new ones;
   `changed_since` = 3 topics; radar ranks platform_scope, launch_date, and payments_provider with flips = 1.
 - **Optional seed:** a third debrief that flips one topic back, so the radar shows a real "flip-flop" (ask first).
 
-### Phase 13: Walk-in Brief
+### ✅ Phase 13: Walk-in Brief (done 31 Oct)
 - **Build:** radar + open conflicts + overdue/due-soon tasks → a strong-model brief (headline, 60-second
   script, agenda).
 - **Test:** the brief at 2026-11-03 mentions onboarding due tomorrow and the platform-scope churn; the agenda has
   at most 5 items.
 
-### Phase 14: Transcript files + audio
+### ✅ Phase 14: Transcript files + audio (done 31 Oct)
 - **Build:** `ingest_parsing`: "Name: line" text, `.vtt` (voice tags), `.srt` (speaker prefixes), audio via
   Groq Whisper; `POST /api/ingest/file`.
 - **Test:** fixtures for each format → identical speaker-attributed text; audio skips cleanly without a key.
 
-### Phase 15: Demo hardening
+### Phase 15: Demo hardening (next: record the live-voice path, re-record the normalizer with qwen, test with real keys)
 - Note from Phase 4: the seed cleanup recording was made by the backup model (qwen hit its free-tier cap), so its
   clean text reads slightly stiffly ("Priya said quick debrief"). Re-record when qwen has quota, then eyeball the output.
 - Record replays for every demo utterance, including the voice-edit and Ask lines you'll actually say;

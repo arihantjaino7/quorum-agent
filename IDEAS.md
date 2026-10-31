@@ -16,3 +16,7 @@ Ideas from either agent or the user. **None of these are built until the user re
 | 9 | **Calendar export**: `.ics` of deadlines | adoption | S | new endpoint |
 | 10 | **Third seed debrief** that flips one topic back | the Flip-flop Radar shows a real A→B→A | S | none |
 | 11 | **Duplicate task detection**: a debrief restating an existing task ("onboarding on track for the 3rd") links to it instead of creating a copy | cleaner board; found while testing the agreeing debrief | S | none |
+| 12 | **Model-written digest, brief and answers** (chief-of-staff voice) on top of the deterministic ones | richer prose | M | needs recordings for the seed |
+| 13 | **Ripple `unowned_work`**: flag work a new decision implies that nobody owns | completes the Ripple idea | M | strong-model call |
+| 14 | **APScheduler job** that runs reminders as the demo clock advances (today: the Run reminders button) | hands-free reminders | S | none |
+| 15 | **Old pages in the new style** (memory, board, digest, ask) with the home page's motion | UX score | M | frontend only |
