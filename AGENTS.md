@@ -8,7 +8,7 @@
   `/VOICE_LOG.md` (append-only; never rewrite it). Prompts are dictated through Wispr Flow; the log is hackathon evidence.
 - `/CONTRACT.md` is the API source of truth. Read it before API work. Don't change it; report discrepancies to the user.
 - Work on the branch named in the task, and commit only the files the task names.
-- Read `/CLAUDE.md` for current decisions (the UI redesign is a one-screen cockpit; its visual style is still undecided).
+- Read `/CLAUDE.md` for current decisions. Your current task list is in `/CODEX_TASKS.md`.
 
 ## Product and hackathon
 Product Space × Wispr Flow Agentic AI Hackathon. Scoring: Wispr 20, prototype/UX 20, AI 20, problem 15, LinkedIn 15, innovation 10. All prompts are dictated; Wispr types natural speech into the focused field. Make agent behavior and cross-meeting memory obvious to product-manager judges in a two-minute demo.
