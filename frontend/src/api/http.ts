@@ -90,7 +90,7 @@ function subscribe(url: string, { onEvent, onError, stopAtReview = true }: Strea
   }
   // Support both `data: {...}` and named SSE events without changing the wire payload.
   source.onmessage = receive
-  for (const type of ['agent_start', 'agent_end', 'review_ready', 'error']) {
+  for (const type of ['agent_start', 'agent_progress', 'agent_end', 'review_ready', 'error']) {
     source.addEventListener(type, (event) => {
       if ('data' in event) receive(event as MessageEvent<string>)
     })

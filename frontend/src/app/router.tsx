@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { DEMO_THREAD } from '@/mocks/fixtures'
 import { useMocks } from '@/api'
 
+const Paper = lazy(() => import('@/paper/Paper'))
 const Capture = lazy(() => import('@/pages/capture'))
 const Run = lazy(() => import('@/pages/run'))
 const Review = lazy(() => import('@/pages/review'))
@@ -23,8 +24,9 @@ function ReviewEntry() {
   return id ? <Navigate to={`/review/${encodeURIComponent(id)}`} replace /> : <><Empty title="Your next decision starts with a conversation.">Capture a meeting debrief first. Your review will be waiting here.</Empty><Button asChild><Link to="/capture">Capture a debrief</Link></Button></>
 }
 
-const router = createBrowserRouter([{ element: <Layout />, children: [
-  { index: true, element: <Navigate to="/capture" replace /> },
+const router = createBrowserRouter([
+  { index: true, element: suspense(<Paper />) },
+  { element: <Layout />, children: [
   { path: 'capture', element: suspense(<Capture />) },
   { path: 'runs/:threadId', element: suspense(<Run />) },
   { path: 'review', element: <ReviewEntry /> },
@@ -34,5 +36,6 @@ const router = createBrowserRouter([{ element: <Layout />, children: [
   { path: 'board', element: suspense(<Board />) },
   { path: 'digest', element: suspense(<Digest />) },
   { path: '*', element: <><Empty title="This page slipped out of the meeting.">Head back to capture to pick up where you left off.</Empty><Button asChild variant="outline"><Link to="/capture">Back to capture</Link></Button></> },
-] }])
+] },
+])
 export function AppRouter() { return <RouterProvider router={router} /> }

@@ -44,7 +44,15 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
 - **Frontend ownership changed:** Claude Code now owns `/frontend` too (Codex's prototype merged from
   `codex/quorum-frontend-prototype`). Codex only does small, self-contained tasks that Claude writes up for the user to hand over.
 - **UI redesign:** one-screen "cockpit" layout (you said | agents → result | memory, approve bar at the bottom).
-  Visual style is **not decided yet**, so ask the user before styling. Order: backend Phases 4–5 first, then the UI.
+  Order: backend Phases 4–5 first, then the UI.
+- **UI concept (31 Oct): "The Paper"**: a living newspaper (warm paper texture, giant condensed serif headlines, black bands,
+  column rules). Decisions = headlines; a conflict = a red-ink CORRECTION striking through the old headline; approve = a
+  rubber stamp; memory = archive of back issues; weekly digest = "this week's edition". UI weighs ~25% of the score.
+- **First view:** only one giant question ("What happened in your meeting?"), a blinking cursor for Wispr, and a small
+  "try the sample debrief" link. Nothing else.
+- **Reveal:** the story unfolds downward, stage by stage (cleaned → agents → conflicts → approve stamp → memory updated);
+  the top nav (Memory, Ask, Board, Digest, Radar…) fades in only after the first approval. Lots of smooth animation.
+- External design references are never named in the product, repo or logs (links are redacted in VOICE_LOG).
 - `source_quote` = the **exact spoken words** from the raw text. If the model's quote isn't found verbatim, snap it to
   the closest sentence of the raw text (logged).
 - Transcripts ("Name: line") get **light cleanup**: speaker lines and attributions are kept; only fillers and small talk

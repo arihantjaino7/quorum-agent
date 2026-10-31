@@ -41,7 +41,7 @@ export function Layout() {
   return <div className="app-shell">
     <a className="skip-link" href="#main-content">Skip to content</a>
     <aside className="sidebar" aria-label="Workspace navigation">
-      <NavLink to="/capture" className="brand" aria-label="Quorum home"><span className="brand-mark">q<span /></span><span>quorum<span className="brand-period">.</span></span></NavLink>
+      <NavLink to="/" className="brand" aria-label="Quorum home"><span className="brand-mark">q<span /></span><span>quorum<span className="brand-period">.</span></span></NavLink>
       <div className="workspace-caption">MEETINGS THAT REMEMBER</div>
       <div className="sidebar-label">YOUR WORKSPACE <span>↗</span></div>
       <nav className="nav-list">{navigation.map((item) => {

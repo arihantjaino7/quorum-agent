@@ -104,8 +104,15 @@ golden expectations, and the self-enabling golden test.
 
 ### Phase 5½: Cockpit UI (frontend redesign) 🎨
 Decided 31 Oct: Claude owns `/frontend`; one-screen cockpit layout; built after Phases 4–5 so it uses real data.
-**The visual style is still open, so ask first.** Keep Codex's plumbing (typed API client, TanStack Query, routes,
-mocks) and replace the screens. Known bugs from the 31 Oct live check, to fix in this phase:
+**Style decided 31 Oct: "The Paper"** (see CLAUDE.md). Keep Codex's plumbing (typed API client, TanStack Query, routes,
+mocks) and replace the screens.
+- **Step 1 ✅ (31 Oct):** `/` is the newspaper front (`frontend/src/paper/`): one question → sample/voice input →
+  masthead + live agent wire → front page (stats, corrections with red-ink strikes, decisions, assignments, marked-up
+  transcript) → press bar → rubber stamp → "Filed" → the nav unlocks. Smooth scroll (Lenis), bundled fonts.
+  Fixed bugs 1, 4, 6, 7 below. The approve counts show 0 until Phase 6 (executor/memory writer are still stubs).
+- **Step 2 (next):** restyle the secondary pages (archive/time machine/radar, ask, board, weekly edition, brief) as
+  sections of the paper; fixes bugs 2, 3, 5 (they live in the old pages).
+Known bugs from the 31 Oct live check:
 1. Mock toggle: `.env.development` (`VITE_USE_MOCKS=true`) beats `.env.local`, so turning mocks off requires `.env.development.local`. Fix the defaults and docs.
 2. The "Already in memory" panel labels decisions by position, not `topic_key` (mismatched labels).
 3. After approve, the page refetches `/review`, which returns 409 (console error). Stop refetching once the run is approved.

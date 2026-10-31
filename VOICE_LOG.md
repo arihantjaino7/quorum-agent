@@ -318,3 +318,25 @@ Make sure to comment and push all the changes whenever you do on GitHub, and do 
 ## [Claude Code] 2026-10-31 11:39 UTC — List of UI pages to find references for
 
 > now give me the listing of the pages that I need to search for and give you the reference.
+
+## [Claude Code] 2026-10-31 11:50 UTC — UI vision: simple first view, animated progressive reveal
+
+> First of all, let me describe to you what is in my mind. For this hackathon, the UI has to be very important, as 25% of the marks are based on UI only. What I am planning is to keep it very, very simple.
+>
+> When the user opens this website, the first option should be very, very obvious: what this application does. There should be nothing else other than that application. Then, slowly, as he moves forward, more options should come in a very animated way. You can add as many smooth animations as you can. Just simply add it.
+>
+> First of all, the very obvious thing that someone will do when opening it should come, and then slowly, one by one, more features and options should be visible as the user goes along. The first view should be very aesthetic, very simple, very unique, and very, very good.
+>
+> [reference link withheld at user's request]
+>
+> This is the third reference. You are only for the reference, but you don't have to copy. Just the uniqueness, like the kind of uniqueness idea that I am trying to give. This is for that purpose. Just don't reveal it. Just use this as proof of how unique and how extraordinary you can be.
+
+## [Claude Code] 2026-10-31 11:55 UTC — UI vision decisions (dictated answers)
+
+> **Concept:** The Paper (Recommended): a living newspaper; conflicts are red-ink corrections, approve is a rubber stamp
+>
+> **First view:** One giant question (Recommended)
+>
+> **Reveal:** Story unfolds (Recommended)
+>
+> **Log the link:** Redact the link (Recommended)

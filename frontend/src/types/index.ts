@@ -1,4 +1,4 @@
-/** Quorum CONTRACT.md v1.2 (2026-10-31), owned by the backend. */
+/** Quorum CONTRACT.md v1.3 (2026-10-31), owned by the backend. */
 export type ISODate = string
 export type SourceType = 'voice' | 'transcript' | 'audio'
 
@@ -79,7 +79,7 @@ export type AgentName = 'normalizer' | 'extractor' | 'memory_retriever' | 'confl
   | 'ripple' | 'review_editor' | 'executor' | 'memory_writer' | 'pipeline'
 
 export interface AgentEvent {
-  type: 'agent_start' | 'agent_end' | 'review_ready' | 'error'
+  type: 'agent_start' | 'agent_progress' | 'agent_end' | 'review_ready' | 'error'
   agent: AgentName
   message: string
   payload?: unknown
