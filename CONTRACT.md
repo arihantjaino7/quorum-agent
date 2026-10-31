@@ -18,6 +18,17 @@ updates this file first and records the change in the Changes block below.
 Every change so far is **additive**: nothing below the base contract was renamed or removed, and
 a frontend built only against v1.0 keeps working.
 
+### v1.2 (2026-10-31): run lifecycle (Phase 2)
+| Where | Change |
+|---|---|
+| SSE stream | **Stays open after `review_ready`.** After approve, the stream shows `executor` and `memory_writer` events, then a final `agent_end` from agent `pipeline` with `payload.status = "approved"` (plus the approve result). Reject ends with `agent_end` `pipeline` with `{status: "rejected"}`. A client that stops reading at `review_ready` still works. |
+| SSE stream | The first event is `agent_start` from agent `pipeline` ("Run started for …"). |
+| `AgentEvent` (error) | `payload: { failed_agent: AgentName \| null, retryable: boolean }` |
+| New | `POST /api/runs/{thread_id}/retry` resumes a failed run from the agent that failed |
+| `approve` / `reject` | The first one wins; any later approve/reject gets **409**. Pending reviews never expire. |
+| `approve` | **502** if execution fails after approval (the run becomes retryable) |
+| Pacing | In replay mode each agent shows as working for at least ~700ms, so the trace is watchable |
+
 ### v1.1 (2026-10-31): Ripple Effect, Walk-in Brief, Decision Time Machine, Flip-flop Radar
 | Where | Change |
 |---|---|
@@ -118,7 +129,8 @@ type AgentEvent = {
   type: "agent_start" | "agent_end" | "review_ready" | "error";
   agent: AgentName;
   message: string;          // human sentence for the trace UI: "Found 3 conflicts with past decisions"
-  payload?: any;            // review_ready → ReviewPayload; agent_end → small summary object
+  payload?: any;            // review_ready → ReviewPayload; error → { failed_agent, retryable };
+                            // agent_end from "pipeline" → { status: "approved" | "rejected", ...approve result }
   ts: ISODateTime;          // v1.1
   run_ms?: number;          // v1.1, on agent_end only
 };
@@ -195,8 +207,22 @@ the same fields as form fields (`text` omitted) → `{ "thread_id": "..." }`
 ### Runs
 `GET /api/runs/{thread_id}/stream` → `text/event-stream`.
 Each SSE message has `event: <AgentEvent.type>` and `data: <AgentEvent JSON>`.
-The last event is `review_ready`, with `payload: ReviewPayload`, or `error`. If the client connects
-late, it gets the events emitted so far replayed first.
+If the client connects late, it gets the events emitted so far replayed first.
+
+Lifecycle of one run (v1.2):
+```
+agent_start pipeline                    "Run started for Investor sync debrief"
+agent_start/agent_end × 5               normalizer, extractor, memory_retriever, conflict_detector, ripple
+review_ready pipeline   payload: ReviewPayload        ← run pauses here for the human
+   …the stream stays open…
+   approve → agent_start/agent_end × 2  executor, memory_writer
+             agent_end pipeline  payload: {status:"approved", created_tasks, …}   ← stream closes
+   reject  → agent_end pipeline  payload: {status:"rejected"}                     ← stream closes
+any agent fails → error <agent>  payload: {failed_agent, retryable:true}           ← stream closes
+```
+Terminal events (the server closes the stream after them): `error`, and `agent_end` from agent `pipeline`.
+After `POST /retry`, open the stream again: the stale `error` is dropped from the replay and the
+run continues from the failed agent. Earlier agents don't rerun.
 
 `GET /api/runs/{thread_id}/review` → `ReviewPayload` (409 if the run is not paused for review yet)
 
@@ -224,7 +250,16 @@ late, it gets the events emitted so far replayed first.
 (`updated_tasks`, `cancelled_task_ids`, `heads_up_sent` are v1.1. `channel` is
 `"telegram"` or `"log"` when Telegram isn't configured.)
 
-`POST /api/runs/{thread_id}/reject` → `{ "ok": true }`
+Errors: **409** if the run isn't awaiting review (still processing, or already approved/rejected:
+the first approve/reject wins). **502** if execution fails after approval; the stream shows the
+failing agent and `POST /retry` finishes the run.
+
+`POST /api/runs/{thread_id}/reject` → `{ "ok": true }` (409 like approve)
+
+`POST /api/runs/{thread_id}/retry` (v1.2) → `{ "ok": true }`. Resumes a failed run in the background
+from the agent that failed. 409 unless the run is in the failed state. Then reopen the stream.
+
+All `/api/runs/{thread_id}/…` routes return 404 for an unknown run (including after `/api/demo/reset`).
 
 ### Directory
 - `GET /api/projects` → `[{ "name": "Pocket", "meeting_count": 2, "last_meeting": "2026-10-31" }]`
