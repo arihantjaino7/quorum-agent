@@ -1,0 +1,26 @@
+# Render Blueprint: one web service that serves the website and the API.
+services:
+  - type: web
+    name: quorum
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: DEMO_REPLAY          # saved answers for the sample debrief; anything else goes live to Groq
+        value: "1"
+      - key: EMBEDDINGS_ENABLED   # keeps memory use low on the free plan; recall falls back to topic matching
+        value: "0"
+      - key: GROQ_API_KEY
+        sync: false
+      - key: NOTION_TOKEN
+        sync: false
+      - key: NOTION_DATABASE_ID
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_REPO
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false

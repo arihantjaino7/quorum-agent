@@ -948,3 +948,6 @@ Tell Claude Code "Codex is done". Claude Code will review the codex/backend-modu
 
 ## [Claude Code] 2026-10-31T13:58:39Z — verify every feature, then deployment
 You check that every feature works properly, then we will proceed towards deployment.
+
+## [Claude Code] 2026-10-31T14:13:08Z — deployment host (answer)
+Where do you want to deploy Quorum? → "One service on Render (Recommended)" (after: "cant you cehck the website live all the features so i can start with deployment")

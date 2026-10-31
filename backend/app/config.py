@@ -57,6 +57,8 @@ class Settings(BaseSettings):
     embedding_model: str = "BAAI/bge-small-en-v1.5"
     embedding_cache: str = str(BACKEND_DIR / ".cache" / "fastembed")
     embeddings_enabled: bool = True
+    # Built frontend served by the backend when present (set in the container image).
+    frontend_dist: str = str(REPO_DIR / "frontend" / "dist")
 
     @property
     def notion_enabled(self) -> bool:

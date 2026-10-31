@@ -79,6 +79,10 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
   uses the strong model to return structured operations that Python applies. Reminders cover open tasks due within 24h of
   the demo clock (or late) and send once per task. Embeddings load from the local cache before any network call.
 - Retrieval = same `topic_key` ∪ top embedding matches. If embeddings are unavailable it degrades to `topic_key` only.
+- **Deployment (31 Oct, user chose Render):** one Docker service serves the built website and the API from the same
+  origin (`Dockerfile`, `render.yaml`, `DEPLOY.md`). The backend serves `frontend/dist` when present and seeds meeting 1 on
+  the first start of an empty database. Free plan: `EMBEDDINGS_ENABLED=0` (topic-only recall), data resets on restart,
+  `DEMO_REPLAY=1` stays on, secrets are set in Render's dashboard and never committed.
 
 ## Hackathon
 Product Space × Wispr Flow "Agentic AI Hackathon". Build by voice; the product's main input is speech via Wispr Flow.

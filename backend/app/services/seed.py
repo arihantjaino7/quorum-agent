@@ -2,7 +2,7 @@
 
 import json
 
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.config import BACKEND_DIR
 from app.models import Decision, Meeting, Project, Task
@@ -22,3 +22,11 @@ def load_meeting1(session: Session) -> None:
     for t in data["tasks"]:
         session.add(Task(project=project, meeting_id=m["id"], status="todo", **t))
     session.commit()
+
+
+def seed_if_empty(session: Session) -> bool:
+    """First start on an empty database: load meeting 1 so the demo has memory to check against."""
+    if session.exec(select(Project)).first() is not None:
+        return False
+    load_meeting1(session)
+    return True

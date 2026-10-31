@@ -35,3 +35,5 @@ Do it once before a demo on venue wifi: `cd backend && python -c "from app.servi
 ```bash
 cd backend && pytest
 ```
+
+Deploying: see [DEPLOY.md](DEPLOY.md) (one Render service, Docker).
