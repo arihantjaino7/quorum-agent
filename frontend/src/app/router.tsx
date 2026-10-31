@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import { DEMO_THREAD } from '@/mocks/fixtures'
 import { useMocks } from '@/api'
 
-const Paper = lazy(() => import('@/paper/Paper'))
+const Home = lazy(() => import('@/home/Home'))
 const Capture = lazy(() => import('@/pages/capture'))
 const Run = lazy(() => import('@/pages/run'))
 const Review = lazy(() => import('@/pages/review'))
@@ -25,7 +25,7 @@ function ReviewEntry() {
 }
 
 const router = createBrowserRouter([
-  { index: true, element: suspense(<Paper />) },
+  { index: true, element: suspense(<Home />) },
   { element: <Layout />, children: [
   { path: 'capture', element: suspense(<Capture />) },
   { path: 'runs/:threadId', element: suspense(<Run />) },

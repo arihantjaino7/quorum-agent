@@ -45,12 +45,13 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
   `codex/quorum-frontend-prototype`). Codex only does small, self-contained tasks that Claude writes up for the user to hand over.
 - **UI redesign:** one-screen "cockpit" layout (you said | agents → result | memory, approve bar at the bottom).
   Order: backend Phases 4–5 first, then the UI.
-- **UI concept (31 Oct): "The Paper"**: a living newspaper (warm paper texture, giant condensed serif headlines, black bands,
-  column rules). Decisions = headlines; a conflict = a red-ink CORRECTION striking through the old headline; approve = a
-  rubber stamp; memory = archive of back issues; weekly digest = "this week's edition". UI weighs ~25% of the score.
-- **First view:** only one giant question ("What happened in your meeting?"), a blinking cursor for Wispr, and a small
-  "try the sample debrief" link. Nothing else.
-- **Reveal:** the story unfolds downward, stage by stage (cleaned → agents → conflicts → approve stamp → memory updated);
+- **UI design (31 Oct, revised):** the newspaper concept was dropped by the user. The UI uses **Codex's visual system**
+  (warm stone, ink, burgundy accent, Inter Tight, rounded cards, light + dark) with rich motion: words rising into focus,
+  a live voice waveform, a pulsing agent pipeline, old-vs-new "collision" cards with a drawn strike, count-ups, an
+  approval seal with ripples. The user delegated the design details to Claude ("do whatever looks extraordinary").
+- **First view:** one giant question ("What happened in your meeting?"), a one-line explanation, the voice box, a
+  "play the sample debrief" chip, and three how-it-works steps. Nothing else.
+- **Reveal:** the story unfolds downward, stage by stage (agents → conflicts → approve seal → workspace);
   the top nav (Memory, Ask, Board, Digest, Radar…) fades in only after the first approval. Lots of smooth animation.
 - External design references are never named in the product, repo or logs (links are redacted in VOICE_LOG).
 - `source_quote` = the **exact spoken words** from the raw text. If the model's quote isn't found verbatim, snap it to
