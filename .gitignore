@@ -31,3 +31,6 @@ frontend/.next/
 Thumbs.db
 .vscode/
 .idea/
+
+# Prompt log (kept out of the repo by choice)
+VOICE_LOG.md

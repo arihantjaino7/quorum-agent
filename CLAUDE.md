@@ -3,9 +3,7 @@
 Context for every Claude Code session in this repo. Read this first, then `PLAN_BACKEND.md` for the current phase.
 
 ## Standing rules (non-negotiable)
-1. **VOICE_LOG first.** At the start of every task, append the user's exact prompt, verbatim with a UTC
-   timestamp, to `VOICE_LOG.md` under a `## [Claude Code] <timestamp> — <label>` heading. Every prompt is
-   dictated through Wispr Flow, and the log is our evidence for the judges. Also log answers to clarifying questions.
+1. **No prompt log in the repo.** Do not keep or commit a log of the user's prompts (the user removed `VOICE_LOG.md` on 31 Oct).
 2. **Ownership.** Claude Code owns `/backend`, `/frontend` (since 31 Oct, by the user's decision) and the root files.
    Codex works only on tasks Claude hands over through the user. Stage paths explicitly (no `git add -A`).
 3. **Contract.** `CONTRACT.md` is the source of truth. Changes are additive only: add the change to the
@@ -53,7 +51,7 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
   "play the sample debrief" chip, and three how-it-works steps. Nothing else.
 - **Reveal:** the story unfolds downward, stage by stage (agents → conflicts → approve seal → workspace);
   the top nav (Memory, Ask, Board, Digest, Radar…) fades in only after the first approval. Lots of smooth animation.
-- External design references are never named in the product, repo or logs (links are redacted in VOICE_LOG).
+- External design references are never named in the product, repo or logs (never write them anywhere).
 - `source_quote` = the **exact spoken words** from the raw text. If the model's quote isn't found verbatim, snap it to
   the closest sentence of the raw text (logged).
 - Transcripts ("Name: line") get **light cleanup**: speaker lines and attributions are kept; only fillers and small talk

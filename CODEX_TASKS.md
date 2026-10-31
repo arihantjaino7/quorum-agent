@@ -17,8 +17,6 @@ Branch: create `codex/backend-modules` from `origin/claude/nice-mayer-1wmx7b`, a
 (one commit per task). Push that branch. Do not push to any other branch, and do not open a pull request.
 
 Rules:
-- Start of every task: append my exact prompt with a UTC timestamp under a `## [Codex] <timestamp> — <label>`
-  heading at the end of /VOICE_LOG.md (append-only).
 - Touch ONLY the files the task names. Do not edit config.py, CONTRACT.md, requirements.txt, README, the frontend,
   or any other module. If you think another file needs changing, write it in your final message instead.
 - No network in tests: use httpx.MockTransport (httpx is already installed). No new dependencies.

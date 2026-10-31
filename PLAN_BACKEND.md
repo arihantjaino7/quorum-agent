@@ -48,7 +48,7 @@ All four are in `CONTRACT.md` v1.1 now, so Codex can build their UI in parallel 
 ## Phases
 
 ### ✅ Phase 0: Foundation (done)
-Repo, `.gitignore`, `.env.example`, README stub, CLAUDE.md, CONTRACT.md v1.1, VOICE_LOG.md, the backend
+Repo, `.gitignore`, `.env.example`, README stub, CLAUDE.md, CONTRACT.md v1.1, the backend
 scaffold (health route, empty agent/service/integration modules, Pydantic contract mirror), seed data,
 golden expectations, and the self-enabling golden test.
 **Test:** `pytest -q` → 13 pass, 6 golden checks skip until their agents exist.

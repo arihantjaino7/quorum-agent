@@ -4,8 +4,7 @@
 - **Claude Code now owns `/frontend`, `/backend` and the root files.** Codex's prototype was merged into
   `claude/nice-mayer-1wmx7b`. Codex works only on tasks the user hands over from Claude Code, each scoped to
   named files. Don't touch other files or refactor beyond the task.
-- At the start of **every task**, append the user's exact prompt with a timestamp under a `[Codex]` heading in
-  `/VOICE_LOG.md` (append-only; never rewrite it). Prompts are dictated through Wispr Flow; the log is hackathon evidence.
+- Do not keep a log of the user's prompts in the repo.
 - `/CONTRACT.md` is the API source of truth. Read it before API work. Don't change it; report discrepancies to the user.
 - Work on the branch named in the task, and commit only the files the task names.
 - Read `/CLAUDE.md` for current decisions. Your current task list is in `/CODEX_TASKS.md`.

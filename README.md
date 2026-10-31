@@ -7,7 +7,7 @@ for 30 seconds. Quorum cleans the speech, pulls out decisions and tasks, **check
 everything your team decided before**, shows what each change breaks downstream, asks you to
 confirm, and then files the tasks, schedules reminders, and briefs everyone affected.
 
-Built by voice for the Product Space × Wispr Flow Agentic AI Hackathon. See [VOICE_LOG.md](VOICE_LOG.md).
+Built by voice for the Product Space × Wispr Flow Agentic AI Hackathon.
 
 ## Repo map
 | Path | Owner | What |
@@ -16,7 +16,6 @@ Built by voice for the Product Space × Wispr Flow Agentic AI Hackathon. See [VO
 | `frontend/` | Codex | UI |
 | `CONTRACT.md` | Claude Code | API contract, the source of truth between the two |
 | `PLAN_BACKEND.md` | Claude Code | Phased backend build plan |
-| `VOICE_LOG.md` | both | Every dictated prompt, verbatim |
 
 ## Run the backend
 ```bash
