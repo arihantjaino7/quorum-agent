@@ -123,7 +123,7 @@ class ReviewPayload(BaseModel):
 
 
 class AgentEvent(BaseModel):
-    type: Literal["agent_start", "agent_end", "review_ready", "error"]
+    type: Literal["agent_start", "agent_progress", "agent_end", "review_ready", "error"]
     agent: AgentName
     message: str
     payload: Any | None = None

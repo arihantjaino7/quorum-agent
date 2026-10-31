@@ -4,6 +4,7 @@ from sqlmodel import Session
 from app import __version__
 from app.config import get_settings
 from app.db import get_session
+from app.integrations import llm
 from app.services import clock
 
 router = APIRouter(tags=["health"])
@@ -15,10 +16,10 @@ def health(session: Session = Depends(get_session)) -> dict:
     return {
         "ok": True,
         "version": __version__,
-        "replay": s.replay_active,
+        "replay": llm.replay_active(),
         "clock": clock.fmt(clock.now(session)),
         "integrations": {
-            "groq": s.groq_enabled,
+            "groq": llm.available(),
             "notion": s.notion_enabled,
             "github": s.github_enabled,
             "telegram": s.telegram_enabled,

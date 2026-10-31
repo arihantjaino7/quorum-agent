@@ -20,6 +20,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import interrupt
 
 from app.config import get_settings
+from app.integrations import llm
 from app.services import runs
 
 PRE_REVIEW = ["normalizer", "extractor", "memory_retriever", "conflict_detector", "ripple"]
@@ -70,6 +71,7 @@ def instrument(name: str):
         runs.emit(tid, "agent_start", name, START_MESSAGES[name])
         t0 = time.perf_counter()
         module = importlib.import_module(f"app.agents.{name}")
+        token = llm.progress.set(lambda msg: runs.emit(tid, "agent_progress", name, msg))
         try:
             if module.IMPLEMENTED:
                 update = await module.run(state) or {}
@@ -79,7 +81,9 @@ def instrument(name: str):
                 update, message = {}, "Not built yet; passed through"
         except Exception as e:
             raise AgentFailed(name, e) from e
-        if settings.replay_active and settings.replay_step_ms > 0:
+        finally:
+            llm.progress.reset(token)
+        if llm.replay_active() and settings.replay_step_ms > 0:
             remaining = settings.replay_step_ms / 1000 - (time.perf_counter() - t0)
             if remaining > 0:
                 await asyncio.sleep(remaining)

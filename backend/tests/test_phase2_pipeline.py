@@ -193,3 +193,20 @@ def test_replay_pacing_slows_each_agent(fresh, monkeypatch):
     monkeypatch.setattr(get_settings(), "replay_step_ms", 60)
     evts = events(fresh, ingest(fresh))
     assert all(e["run_ms"] >= 60 for e in evts if e["type"] == "agent_end")
+
+
+def test_long_waits_show_as_progress_in_the_trace(fresh, monkeypatch):
+    import app.agents.extractor as ex
+    from app.integrations import llm
+
+    async def run(state):
+        llm._report("Waiting for Groq rate limit (11s)…")
+        return {}
+
+    monkeypatch.setattr(ex, "IMPLEMENTED", True)
+    monkeypatch.setattr(ex, "run", run)
+    evts = events(fresh, ingest(fresh))
+    i = trace(evts).index(("agent_start", "extractor"))
+    assert trace(evts)[i + 1] == ("agent_progress", "extractor")
+    assert evts[i + 1]["message"] == "Waiting for Groq rate limit (11s)…"
+    assert trace(evts)[i + 2] == ("agent_end", "extractor")

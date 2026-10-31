@@ -12,6 +12,8 @@ _tmp = Path(tempfile.mkdtemp(prefix="quorum-test-"))
 os.environ["DATABASE_URL"] = f"sqlite:///{_tmp / 'test.db'}"
 os.environ["CHECKPOINT_DB"] = str(_tmp / "checkpoints.db")
 os.environ["REPLAY_STEP_MS"] = "0"
+os.environ["GROQ_AUTODETECT"] = "0"  # no network probe in tests
+os.environ["QUORUM_RECORD"] = "0"
 for _key in ("GROQ_API_KEY", "NOTION_TOKEN", "NOTION_DATABASE_ID", "GITHUB_TOKEN", "GITHUB_REPO",
              "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"):
     os.environ[_key] = ""

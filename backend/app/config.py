@@ -25,12 +25,21 @@ class Settings(BaseSettings):
     groq_model_strong: str = "openai/gpt-oss-120b"
     groq_model_fast: str = "llama-3.1-8b-instant"
     groq_model_whisper: str = "whisper-large-v3-turbo"
+    # Reasoning effort for models that support it (gpt-oss: low | medium | high). Empty = model default.
+    groq_reasoning_strong: str = ""
+    groq_reasoning_fast: str = ""
+    groq_timeout_s: float = 30.0
+    groq_max_retries: int = 2  # retries after malformed output or a transient error
+    # When no GROQ_API_KEY is set, probe Groq once at startup: the key may be a network secret the proxy injects.
+    groq_autodetect: bool = True
 
     # Demo safety net
     demo_replay: bool = True
     demo_clock_start: str = "2026-10-31T09:00:00"
     # In replay mode each agent stays "working" at least this long so the live trace is watchable on stage.
     replay_step_ms: int = 700
+    # Save live LLM answers as replay recordings. Only when explicitly asked.
+    quorum_record: bool = False
 
     # Integrations
     notion_token: str = ""
@@ -46,10 +55,6 @@ class Settings(BaseSettings):
     embedding_model: str = "BAAI/bge-small-en-v1.5"
 
     @property
-    def groq_enabled(self) -> bool:
-        return bool(self.groq_api_key)
-
-    @property
     def notion_enabled(self) -> bool:
         return bool(self.notion_token and self.notion_database_id)
 
@@ -60,11 +65,6 @@ class Settings(BaseSettings):
     @property
     def telegram_enabled(self) -> bool:
         return bool(self.telegram_bot_token and self.telegram_chat_id)
-
-    @property
-    def replay_active(self) -> bool:
-        """Replay recordings are used when explicitly enabled or when Groq is unavailable."""
-        return self.demo_replay or not self.groq_enabled
 
 
 @lru_cache

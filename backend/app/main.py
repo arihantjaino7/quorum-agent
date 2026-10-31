@@ -11,6 +11,7 @@ from app import pipeline
 from app.api import clock, decisions, demo, directory, health, runs, tasks
 from app.config import get_settings
 from app.db import init_db
+from app.integrations import llm
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("quorum")
@@ -18,8 +19,8 @@ log = logging.getLogger("quorum")
 
 def _log_integrations() -> None:
     s = get_settings()
+    llm.probe()
     flags = {
-        "groq": s.groq_enabled,
         "notion": s.notion_enabled,
         "github": s.github_enabled,
         "telegram": s.telegram_enabled,
@@ -27,7 +28,7 @@ def _log_integrations() -> None:
     for name, enabled in flags.items():
         if not enabled:
             log.warning("[%s] not configured; this feature will degrade gracefully", name)
-    log.info("replay mode: %s", "ON" if s.replay_active else "off")
+    log.info("replay mode: %s", "ON" if llm.replay_active() else "off")
 
 
 @asynccontextmanager
