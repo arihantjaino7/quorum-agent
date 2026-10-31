@@ -14,6 +14,17 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
 5. **Never crash on a missing key.** Every integration checks its config, logs one clear line
    (`[notion] NOTION_TOKEN missing; skipping, task kept locally`), and degrades.
 6. No model identifiers in commits, PRs, or code comments.
+7. **Consult before deciding.** Any new product or design decision not already settled here or in
+   `PLAN_BACKEND.md` goes to the user first (interactive question), before code. Improvement ideas go into
+   `IDEAS.md` and are not built until the user reviews them (planned for the end).
+
+## Settled decisions (log)
+- Demo clock is **frozen**: it only moves when set via `POST /api/clock`.
+- IDs: seed items get fixed readable IDs (`dec_m1_platform`); live items get prefixed short IDs
+  (`mtg_`, `dec_`, `tsk_`, `cfl_`, `rpl_`, `q_`, `run_` + 8 hex chars).
+- Telegram: **one team group chat** (`TELEGRAM_CHAT_ID`); messages are addressed by name.
+- Replay mode for seed demo inputs; tests use recordings.
+- Contract changes are additive only and logged in CONTRACT.md's Changes block.
 
 ## Hackathon
 Product Space × Wispr Flow "Agentic AI Hackathon". Build by voice; the product's main input is speech via Wispr Flow.

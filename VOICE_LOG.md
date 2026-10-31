@@ -97,3 +97,17 @@ Format:
 > **Contract:** Hey, you can add adaptive or additive only, or otherwise add new options / them in the changes section at the top of contractor.md for Codex. Everything you are saying, just do that. Whichever will be the right
 >
 > **Fallback:** Replay mode for saved data with demo replay. The seed deep uses recorded model output, so the terminal demo always works. The input seed goes to Groq. Post also uses these recordings, ok
+
+## [Claude Code] 2026-10-31 08:27 UTC — Go phase 1 + consult-before-deciding rule
+
+> All right, now let's start with phase one. First of all, I want to clarify one thing: if, at any point in the process, you have to make any decision, first clarify it with me. Ask me. Till now, any decision you have made with me, just follow that. For the new decision which you are about to make, first consult me, then only proceed forward. In between, if you have any idea to make this better, just tell me. We will implement that also.
+
+## [Claude Code] 2026-10-31 08:32 UTC — Phase 1 decisions (dictated answers)
+
+> **Clock:** Frozen (Recommended)
+>
+> **IDs:** Use prefix short IDs, which you are recommended to use as they're easy to read in logs and the UI, and the typo in a prefix is caught only
+>
+> **Telegram:** Go with one team group chat, which you are recommending
+>
+> **Extras:** Just keep them separately in a file. All the fixes which you are planning, we will go through every fix you can do. I will go through them last. First of all, make the basic demo version so I can see what is going on.
