@@ -945,3 +945,6 @@ owner/due omitted when empty; 400; 401; timeout; token not in logs; long text tr
 Commit message: "Notion task pages"
 After Codex finishes
 Tell Claude Code "Codex is done". Claude Code will review the codex/backend-modules branch, run the tests, merge it, and wire the modules into the executor (Phase 6), reminders (Phase 10) and file upload (Phase 14).
+
+## [Claude Code] 2026-10-31T13:58:39Z — verify every feature, then deployment
+You check that every feature works properly, then we will proceed towards deployment.
