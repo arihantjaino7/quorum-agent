@@ -63,11 +63,31 @@ def align(scenes: list[str], words: list[dict]) -> list[float]:
     return starts
 
 
+def make_music(total: float, path: Path) -> None:
+    """A soft ambient bed made from sine chords (Am - F - C - G), looped to length. Royalty-free by construction."""
+    chords = [(110.0, 164.81, 220.0, 261.63, 329.63), (87.31, 130.81, 174.61, 220.0, 261.63),
+              (65.41, 130.81, 196.0, 261.63, 329.63), (98.0, 146.83, 196.0, 246.94, 293.66)]
+    seg = 9.0
+    ins, filt = [], []
+    for k, notes in enumerate(chords):
+        for j, f in enumerate(notes):
+            ins += ["-f", "lavfi", "-t", f"{seg + 3}", "-i", f"sine=frequency={f}:sample_rate=44100"]
+        idx = [k * 5 + j for j in range(5)]
+        filt.append("".join(f"[{i}:a]" for i in idx) + f"amix=inputs=5:normalize=0,volume=0.16,afade=t=in:d=3,afade=t=out:st={seg}:d=3,adelay={int(k * seg * 1000)}:all=1[c{k}]")
+    filt.append("".join(f"[c{k}]" for k in range(len(chords))) + f"amix=inputs={len(chords)}:normalize=0,lowpass=f=900,aecho=0.8:0.85:700|1300:0.35|0.25,tremolo=f=0.15:d=0.25[loop]")
+    one = path.with_suffix(".loop.wav")
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", *ins, "-filter_complex", ";".join(filt), "-map", "[loop]", "-t", f"{seg * len(chords) + 3}", str(one)], check=True)
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-stream_loop", "-1", "-i", str(one), "-t", f"{total:.2f}", str(path)], check=True)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--rec", required=True, help="folder with marks.json and the recorded .webm")
     ap.add_argument("--voice")
+    ap.add_argument("--starts", help="voice_starts.json from join_voice.py (skips transcription)")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--music", help="your own music file; otherwise an ambient bed is generated")
+    ap.add_argument("--no-music", action="store_true")
     ap.add_argument("--narration", default=str(HERE / "NARRATION.md"))
     a = ap.parse_args()
 
@@ -81,9 +101,11 @@ def main() -> None:
 
     if a.voice:
         voice = Path(a.voice)
-        words = transcribe(voice)
-        starts = align(scenes, words)
         duration = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(voice)]))
+        if a.starts:
+            starts = json.loads(Path(a.starts).read_text())["starts"]
+        else:
+            starts = align(scenes, transcribe(voice))
         total = duration + 1.0
         targets = [starts[i + 1] - starts[i] for i in range(len(starts) - 1)] + [total - starts[-1]]
     else:
@@ -104,11 +126,23 @@ def main() -> None:
     chains.append("".join(labels) + f"concat=n={n}:v=1:a=0,fade=t=in:d=0.4,fade=t=out:st={total - 0.6:.2f}:d=0.6[v]")
 
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(rec / meta["video"])]
+    audio = []
     if a.voice:
         cmd += ["-i", a.voice]
+        music = None
+        if not a.no_music:
+            music = Path(a.music) if a.music else Path(a.out).with_suffix(".music.wav")
+            if not a.music:
+                make_music(total, music)
+            cmd += ["-stream_loop", "-1", "-i", str(music)]
+            # the music sits low and dips whenever the voice is speaking
+            chains.append(f"[1:a]loudnorm=I=-16:TP=-1.5,asplit=2[vo][vo2];[2:a]volume=3.0,afade=t=in:d=2.5,afade=t=out:st={total - 3.5:.2f}:d=3.5[m];"
+                          f"[m][vo2]sidechaincompress=threshold=0.03:ratio=4:attack=30:release=600[md];[vo][md]amix=inputs=2:normalize=0:duration=first,apad,atrim=0:{total:.2f},afade=t=out:st={total - 0.8:.2f}:d=0.8[aout]")
+        else:
+            chains.append(f"[1:a]loudnorm=I=-16:TP=-1.5,apad,atrim=0:{total:.2f},afade=t=out:st={total - 0.8:.2f}:d=0.8[aout]")
     cmd += ["-filter_complex", ";".join(chains), "-map", "[v]"]
     if a.voice:
-        cmd += ["-map", "1:a", "-af", f"loudnorm=I=-16:TP=-1.5,apad,afade=t=in:d=0.2,afade=t=out:st={total - 0.8:.2f}:d=0.8", "-c:a", "aac", "-b:a", "192k"]
+        cmd += ["-map", "[aout]", "-ac", "2", "-c:a", "aac", "-b:a", "192k"]
     cmd += ["-c:v", "libx264", "-preset", "medium", "-crf", "21", "-pix_fmt", "yuv420p", "-t", f"{total:.2f}", "-movflags", "+faststart", a.out]
     subprocess.run(cmd, check=True)
     print("wrote", a.out, f"({total:.1f}s)")
