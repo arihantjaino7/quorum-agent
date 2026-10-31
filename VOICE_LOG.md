@@ -143,3 +143,29 @@ Format:
 ## [Claude Code] 2026-10-31 08:59 UTC — Screenshot reply (no dictated text)
 
 > *(User sent a screenshot of the empty "Environment variables" dialog instead of answering the questions.)*
+
+## [Claude Code] 2026-10-31 09:01 UTC — Re-check Groq
+
+> now see
+
+## [Claude Code] 2026-10-31 09:05 UTC — Phase 3 decisions (dictated answers)
+
+> **Models:** Bake-off, then you pick (Recommended)
+>
+> **Retries:** 2 retries (Recommended)
+>
+> **Timeout:** 30 seconds (Recommended)
+>
+> **Recording:** Only when asked (Recommended)
+>
+> **Groq detection:** Auto-detect at startup (Recommended)
+
+## [Claude Code] 2026-10-31 09:57 UTC — Bake-off follow-up decisions (dictated answers)
+
+> **Groq tier:** Stay on free tier
+>
+> **429 handling:** Wait if it fits in 30s (Recommended)
+>
+> **Reasoning:** Test low and default (Recommended)
+>
+> **Re-run:** Re-run now, paced (Recommended)

@@ -30,6 +30,15 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
 - Parallel pending runs per project are allowed; each is checked only against approved memory.
 - An agent failure stops the run (`error` event); `POST /api/runs/{id}/retry` resumes from the failed agent.
 - The first approve/reject wins (later ones → 409); pending reviews never expire.
+- LLM calls: 2 retries on malformed structured output (each retry tells the model what was wrong); 30s timeout per call.
+- Recordings are saved only when `QUORUM_RECORD=1`; nothing is auto-recorded.
+- Groq availability: `GROQ_API_KEY` if set, otherwise a one-time probe of Groq's model list at startup (the key can
+  live as a network secret that the proxy injects). Tests disable the probe (`GROQ_AUTODETECT=0`).
+- Models are chosen by a bake-off (`scripts/bakeoff.py`) on debrief2; the user picks strong + fast from the results.
+- Groq stays on the **free tier** (tight per-minute token limits); the seed demo relies on replay, and calls are paced.
+- Rate limits (429): if Groq's suggested wait is ≤ 30s, wait and retry (counts as a retry) and show "waiting for Groq…"
+  in the trace (`agent_progress` event); otherwise fail with a clear rate-limit error + Retry.
+- Groq's own `json_validate_failed` counts as malformed output (retried with feedback).
 
 ## Hackathon
 Product Space × Wispr Flow "Agentic AI Hackathon". Build by voice; the product's main input is speech via Wispr Flow.
