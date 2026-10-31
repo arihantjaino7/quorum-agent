@@ -111,3 +111,19 @@ Format:
 > **Telegram:** Go with one team group chat, which you are recommending
 >
 > **Extras:** Just keep them separately in a file. All the fixes which you are planning, we will go through every fix you can do. I will go through them last. First of all, make the basic demo version so I can see what is going on.
+
+## [Claude Code] 2026-10-31 08:36 UTC — Go phase 2
+
+> Go with Phase 2, and again, same thing: just don't make any decision on your own. If you have any question, just ask me before committing to one thing.
+
+## [Claude Code] 2026-10-31 08:40 UTC — Phase 2 decisions (dictated answers)
+
+> **Pacing:** Go with the recommended option.
+>
+> **Post-approve trace:** Keep stream open (Recommended)
+>
+> **Parallel runs:** Allow parallel runs (Recommended)
+>
+> **Failure:** Stop + retry endpoint (Recommended)
+>
+> **Double approve / expiry:** First wins, never expire (Recommended)

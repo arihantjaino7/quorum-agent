@@ -25,6 +25,11 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
 - Telegram: **one team group chat** (`TELEGRAM_CHAT_ID`); messages are addressed by name.
 - Replay mode for seed demo inputs; tests use recordings.
 - Contract changes are additive only and logged in CONTRACT.md's Changes block.
+- Replay pacing: each agent shows as working for at least `REPLAY_STEP_MS` (700ms) in replay mode only; 0 in tests.
+- The SSE stream stays open after `review_ready` and also shows executor/memory_writer, ending with an `agent_end` from `pipeline`.
+- Parallel pending runs per project are allowed; each is checked only against approved memory.
+- An agent failure stops the run (`error` event); `POST /api/runs/{id}/retry` resumes from the failed agent.
+- The first approve/reject wins (later ones → 409); pending reviews never expire.
 
 ## Hackathon
 Product Space × Wispr Flow "Agentic AI Hackathon". Build by voice; the product's main input is speech via Wispr Flow.
