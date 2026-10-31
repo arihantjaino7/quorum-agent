@@ -1,0 +1,1 @@
+quick update from today's standup. nothing big changed, we're still iOS only for v1 and Android stays in v2. launch is still on track for November 20th, and we're sticking with Razorpay for payments. Ananya says the onboarding screens are on track for the 3rd. that's all.

@@ -28,6 +28,9 @@ uvicorn app.main:app --reload --port 8000
 # http://localhost:8000/api/health
 ```
 
+The first memory search downloads the local embedding model (~70MB, cached in `backend/.cache/`).
+Do it once before a demo on venue wifi: `cd backend && python -c "from app.services import embeddings; embeddings.embed(['warm up'])"`.
+
 ## Tests
 ```bash
 cd backend && pytest

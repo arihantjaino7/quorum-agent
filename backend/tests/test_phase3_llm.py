@@ -27,7 +27,7 @@ def env(monkeypatch, tmp_path):
     monkeypatch.setattr(store, "RECORDINGS_DIR", tmp_path)
     s = get_settings()
     for k, v in {"demo_replay": True, "quorum_record": False, "groq_max_retries": 2, "groq_timeout_s": 30.0,
-                 "groq_reasoning_strong": "", "groq_reasoning_fast": ""}.items():
+                 "groq_reasoning_strong": "", "groq_reasoning_fast": "", "quorum_record_only": ""}.items():
         monkeypatch.setattr(s, k, v)
     monkeypatch.setattr(llm, "_available", True)
     return s
@@ -99,6 +99,17 @@ def test_record_only_when_asked(env, fake, tmp_path):
     env.quorum_record = False
     calls = fake()
     assert run(llm.structured("extractor", "strong", Out, MSGS)).answer == "live"  # now served from replay
+    assert calls == []
+
+
+def test_record_only_limits_which_agents_go_live(env, fake, monkeypatch):
+    key = store.make_key("extractor", "strong", Out, MSGS)
+    store.save("extractor", key, tier="strong", model="m", schema=Out, messages=MSGS,
+               output={"answer": "recorded", "due": None}, latency_ms=1)
+    env.quorum_record = True
+    monkeypatch.setattr(env, "quorum_record_only", "conflict_detector")
+    calls = fake()
+    assert run(llm.structured("extractor", "strong", Out, MSGS)).answer == "recorded"  # not listed → replay
     assert calls == []
 
 

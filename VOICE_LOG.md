@@ -296,3 +296,17 @@ Make sure to comment and push all the changes whenever you do on GitHub, and do 
 > **Fillers:** One summary line (Recommended)
 >
 > **qwen free-tier limit:** Auto-fallback to 120b (Recommended)
+
+## [Claude Code] 2026-10-31 11:30 UTC — Start phase 5
+
+> Start phase 5
+
+## [Claude Code] 2026-10-31 11:32 UTC — Phase 5 decisions (dictated answers)
+
+> **Severity:** AI judges, with fixed rules (Recommended)
+>
+> **Affected tasks:** AI picks from open tasks (Recommended)
+>
+> **Deadline collision:** Due after launch, or already late (Recommended)
+>
+> **Overload:** New + existing open tasks (Recommended)

@@ -1,0 +1,53 @@
+{
+  "key": "144ffc896247e3c425f92c8ac14d99ec860780905f488a6208abd02a2b03e1fb",
+  "agent": "extractor",
+  "tier": "strong",
+  "model": "openai/gpt-oss-120b",
+  "schema": "ExtractorOut",
+  "recorded_at": "2026-10-31T11:35:20Z",
+  "latency_ms": 1408,
+  "messages": [
+    {
+      "role": "system",
+      "content": "You extract decisions and action items from a meeting debrief or transcript.\n\nDecisions:\n- A decision is something the team settled (scope, dates, vendors, priorities), not a task.\n- topic_key: reuse one of the EXISTING TOPIC KEYS below when the decision is about the same subject, even if\n  it reverses it. Otherwise invent a short snake_case key.\n- made_by: attribution matters. \"Rahul said X\" or \"per Rahul, X\" means made_by = \"Rahul\", not the speaker.\n  Credit covers only the decision in that same statement (and its direct consequence, e.g. \"because of that ...\").\n  A later, separate decision phrased as \"we're switching to ...\" or \"we decided ...\" is made by the speaker.\n- statement: one short sentence stating the new state (\"v1 ships on iOS and Android\"), including the final\n  value after any self-correction (\"December 1st, no wait, November 28th\" → 28 Nov).\n\nTasks:\n- One task per concrete commitment with an owner (\"X will/is going to/is taking/I'll ...\"). \"I\" is the speaker.\n- Skip chores that are not project work (office facilities, coffee machines) and anything nobody committed to.\n- due_date: resolve against the meeting date and calendar below. \"Next <weekday>\" = first such weekday after\n  the meeting date; a bare weekday = the next one after the meeting date; \"the 20th\" = next 20th on or after\n  the meeting date. raw_due_phrase keeps the spoken words, fillers included (e.g. \"by, uh, next Wednesday\").\n- source_quote must be copied exactly from the text.\n\nMeeting date: Saturday 2026-10-31.\nCalendar from the meeting date onward:\n  Sat 2026-10-31  (meeting day)\n  Sun 2026-11-01\n  Mon 2026-11-02\n  Tue 2026-11-03\n  Wed 2026-11-04\n  Thu 2026-11-05\n  Fri 2026-11-06\n  Sat 2026-11-07\n  Sun 2026-11-08\n  Mon 2026-11-09\n  Tue 2026-11-10\n  Wed 2026-11-11\n  Thu 2026-11-12\n  Fri 2026-11-13\n  Sat 2026-11-14\n  Sun 2026-11-15\n  Mon 2026-11-16\n  Tue 2026-11-17\n  Wed 2026-11-18\n  Thu 2026-11-19\n  Fri 2026-11-20\n  Sat 2026-11-21\n  Sun 2026-11-22\n  Mon 2026-11-23\n  Tue 2026-11-24\n  Wed 2026-11-25\n  Thu 2026-11-26\n  Fri 2026-11-27\n  Sat 2026-11-28\n  Sun 2026-11-29\n  Mon 2026-11-30\n  Tue 2026-12-01\n  Wed 2026-12-02\n  Thu 2026-12-03\n  Fri 2026-12-04\n\nKNOWN PEOPLE: Ananya, Priya, Rahul\nEXISTING TOPIC KEYS (current decisions):\n  launch_date: Public launch is 20 Nov 2026\n  payments_provider: Payments via Razorpay, not Stripe\n  platform_scope: v1 is iOS only; Android moves to v2\n\nYou get the CLEANED TEXT (use it for meaning and dates) and the ORIGINAL WORDS. Copy source_quote and raw_due_phrase from the ORIGINAL WORDS, verbatim."
+    },
+    {
+      "role": "user",
+      "content": "Speaker: Priya\n\nCLEANED TEXT:\nQuick update from today's standup. Nothing big changed; we're still iOS only for v1 and Android stays in v2. Launch is still on track for Friday 2026-11-20 (said: 'November 20th'), and we're sticking with Razorpay for payments. Ananya says the onboarding screens are on track for Tuesday 2026-11-03 (said: 'the 3rd'). That's all.\n\nORIGINAL WORDS:\nquick update from today's standup. nothing big changed, we're still iOS only for v1 and Android stays in v2. launch is still on track for November 20th, and we're sticking with Razorpay for payments. Ananya says the onboarding screens are on track for the 3rd. that's all.\n"
+    }
+  ],
+  "output": {
+    "decisions": [
+      {
+        "topic_key": "platform_scope",
+        "statement": "v1 is iOS only and Android is scheduled for v2",
+        "made_by": "Priya",
+        "rationale": null,
+        "source_quote": "we're still iOS only for v1 and Android stays in v2"
+      },
+      {
+        "topic_key": "launch_date",
+        "statement": "Public launch is 20 Nov 2026",
+        "made_by": "Priya",
+        "rationale": null,
+        "source_quote": "launch is still on track for November 20th"
+      },
+      {
+        "topic_key": "payments_provider",
+        "statement": "Payments via Razorpay",
+        "made_by": "Priya",
+        "rationale": null,
+        "source_quote": "we're sticking with Razorpay for payments"
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Finish onboarding screens",
+        "owner": "Ananya",
+        "due_date": "2026-11-03",
+        "raw_due_phrase": "the 3rd",
+        "source_quote": "Ananya says the onboarding screens are on track for the 3rd"
+      }
+    ]
+  }
+}

@@ -15,3 +15,4 @@ Ideas from either agent or the user. **None of these are built until the user re
 | 8 | **Decision confidence**: hard vs. tentative decisions; tentative ones don't ripple | fewer false alarms | M | additive field on Decision |
 | 9 | **Calendar export**: `.ics` of deadlines | adoption | S | new endpoint |
 | 10 | **Third seed debrief** that flips one topic back | the Flip-flop Radar shows a real A→B→A | S | none |
+| 11 | **Duplicate task detection**: a debrief restating an existing task ("onboarding on track for the 3rd") links to it instead of creating a copy | cleaner board; found while testing the agreeing debrief | S | none |

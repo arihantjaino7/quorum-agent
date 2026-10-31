@@ -40,6 +40,8 @@ class Settings(BaseSettings):
     replay_step_ms: int = 700
     # Save live LLM answers as replay recordings. Only when explicitly asked.
     quorum_record: bool = False
+    # With QUORUM_RECORD=1: comma-separated agents to record; the others keep replaying. Empty = all.
+    quorum_record_only: str = ""
 
     # Integrations
     notion_token: str = ""
@@ -53,6 +55,8 @@ class Settings(BaseSettings):
     database_url: str = f"sqlite:///{BACKEND_DIR / 'data' / 'quorum.db'}"
     checkpoint_db: str = str(BACKEND_DIR / "data" / "checkpoints.db")
     embedding_model: str = "BAAI/bge-small-en-v1.5"
+    embedding_cache: str = str(BACKEND_DIR / ".cache" / "fastembed")
+    embeddings_enabled: bool = True
 
     @property
     def notion_enabled(self) -> bool:

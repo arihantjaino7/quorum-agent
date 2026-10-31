@@ -93,7 +93,7 @@ golden expectations, and the self-enabling golden test.
 - **Proves:** messy speech → clean structure, with correct attribution ("Rahul said" → Rahul).
 - **Test:** golden corrections, digression, decisions, and tasks checks go green; date-resolver unit table (15+ phrases).
 
-### Phase 5: Memory + conflicts 🎯 (the core)
+### ✅ Phase 5: Memory + conflicts 🎯 (the core) (done)
 - **Build:** `services/embeddings.py` (fastembed `bge-small`, float32 blobs, numpy cosine), the memory
   retriever (same topic_key ∪ top-k similar), and the conflict detector: the LLM judges reversal or
   contradiction with an explanation and resolution; Python checks deadline collisions and overload
@@ -198,4 +198,5 @@ mocks) and replace the screens. Known bugs from the 31 Oct live check, to fix in
 | `topic_key` drift ("launch" vs "launch_date") | Extractor is prompted with existing keys; retriever also matches by embedding |
 | fastembed model download on venue wifi | Pre-download during setup; cache dir in config |
 | Contract drift with Codex | `test_schema_fields_match_contract` fails when schemas.py and CONTRACT.md diverge |
+| Replay keys include memory matches, which depend on the embedding model | Model cached in `backend/.cache/fastembed` (downloaded once, ~70MB); without it, retrieval degrades to topic_key matching, prompts differ, and replay misses with a clear error |
 | A LangGraph upgrade changes interrupt semantics | Versions pinned in requirements.txt; Phase 2 tests cover interrupt/resume |

@@ -210,8 +210,10 @@ async def structured(agent: str, tier: Tier, schema: type[BaseModel], messages: 
     s = get_settings()
     model = model_for(tier)
     key = store.make_key(agent, tier, schema, messages)
+    only = {a.strip() for a in s.quorum_record_only.split(",") if a.strip()}
+    recording = s.quorum_record and (not only or agent in only)
 
-    if s.demo_replay and not s.quorum_record:
+    if s.demo_replay and not recording:
         rec = store.load(agent, key)
         if rec is not None:
             if rec["model"] != model:
@@ -237,7 +239,7 @@ async def structured(agent: str, tier: Tier, schema: type[BaseModel], messages: 
         model = backup
         out = await _live(agent, model, schema, messages, reasoning_for("strong"))
     latency_ms = int((time.perf_counter() - t0) * 1000)
-    if s.quorum_record:
+    if recording:
         path = store.save(agent, key, tier=tier, model=model, schema=schema, messages=messages,
                           output=out.model_dump(mode="json"), latency_ms=latency_ms)
         log.info("[replay] recorded %s → %s", agent, path.name)

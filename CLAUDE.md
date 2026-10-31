@@ -54,6 +54,12 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
   model (gpt-oss-120b @low), with an `agent_progress` note "qwen over free-tier limit; using backup model".
 - Dates: a deterministic Python resolver (`services/dates.py`) checks the LLM's ISO dates and overrides them when it
   can parse the phrase.
+- **Conflicts (Phase 5):** severity is set by the conflict agent using fixed rules (HIGH = reverses scope/vendor/platform
+  or invalidates work underway; MEDIUM = moves a date or amends; LOW = minor). Python checks: deadline collision =
+  medium, overload = low. Affected tasks are picked by the agent from the project's open tasks.
+- Deadline collision = a task due after the newest launch/release date decision, or a new task due before the meeting
+  date. Overload = 3+ tasks for one owner on one day, counting new and existing open tasks (flagged only if a new task is involved).
+- Retrieval = same `topic_key` ∪ top embedding matches. If embeddings are unavailable it degrades to `topic_key` only.
 
 ## Hackathon
 Product Space × Wispr Flow "Agentic AI Hackathon". Build by voice; the product's main input is speech via Wispr Flow.
