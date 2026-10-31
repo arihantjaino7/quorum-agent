@@ -81,7 +81,7 @@ async def run(state: dict) -> dict:
 
 
 def describe(update: dict) -> str:
-    r = update["result"]
+    r = {"created_tasks": [], "updated_tasks": [], "cancelled_task_ids": [], "heads_up_sent": [], **update.get("result", {})}
     parts = [f"created {len(r['created_tasks'])} task{'s' * (len(r['created_tasks']) != 1)}"]
     linked = sum(1 for t in r["created_tasks"] if t.get("tracker_url"))
     parts.append(f"{linked} linked in the tracker" if linked else "kept locally")

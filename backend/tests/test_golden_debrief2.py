@@ -32,7 +32,7 @@ def _run_debrief2(client, seed_dir, expected) -> dict:
     thread_id = r.json()["thread_id"]
 
     review = None
-    with client.stream("GET", f"/api/runs/{thread_id}/stream") as s:
+    with client.stream("GET", f"/api/runs/{thread_id}/stream?until=review") as s:
         for line in s.iter_lines():
             if not line.startswith("data:"):
                 continue

@@ -155,7 +155,8 @@ def digest(s: Session, person: str, week_of: str | None) -> dict:
     sunday = monday + timedelta(days=6)
     mine = s.exec(select(models.Task).where(models.Task.owner == person, models.Task.status != "pending")).all()
     done = [t for t in mine if t.status == "done"]
-    due = [t for t in mine if t.status == "todo" and t.due_date and monday.isoformat() <= t.due_date <= sunday.isoformat()]
+    horizon = (sunday + timedelta(days=7)).isoformat()  # this week plus the next, so a Saturday digest still looks ahead
+    due = [t for t in mine if t.status == "todo" and t.due_date and today.isoformat() <= t.due_date <= horizon]
     late = [t for t in mine if t.status == "todo" and t.due_date and t.due_date < today.isoformat()]
     decisions = [d for d in s.exec(select(models.Decision).where(models.Decision.made_by == person)).all()
                  if monday.isoformat() <= d.date <= sunday.isoformat()]
@@ -163,7 +164,7 @@ def digest(s: Session, person: str, week_of: str | None) -> dict:
     conflicts = [c for c in s.exec(select(models.Conflict)).all()
                  if my_ids & set(c.affected_task_ids) or c.new_item_id in {d.id for d in decisions}]
     lines = [f"## {person}, your week of {monday:%-d %b}", ""]
-    lines.append(f"**{len(late)} overdue, {len(due)} due this week, {len(done)} done.**"
+    lines.append(f"**{len(late)} overdue, {len(due)} coming up, {len(done)} done.**"
                  if (late or due or done) else "Nothing assigned to you this week. Enjoy the quiet.")
     if late:
         lines += ["", "**Fix first:**"] + [f"- {t.title} (was due {t.due_date})" for t in late]

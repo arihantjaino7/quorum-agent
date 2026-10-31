@@ -22,7 +22,8 @@ BODY = {"project": "Pocket", "title": "Investor sync debrief", "date": "2026-10-
 def events(client, tid, stop_at=("review_ready",)):
     """Read the SSE stream until an event whose type is in stop_at, or until the server closes it."""
     out = []
-    with client.stream("GET", f"/api/runs/{tid}/stream") as s:
+    until = "?until=review" if "review_ready" in stop_at and "agent_end" not in stop_at else ""
+    with client.stream("GET", f"/api/runs/{tid}/stream{until}") as s:
         assert s.status_code == 200
         for line in s.iter_lines():
             if line.startswith("data:"):

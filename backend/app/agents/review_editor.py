@@ -110,7 +110,7 @@ async def run(state: dict) -> dict:
 
 
 def describe(update: dict) -> str:
-    n = len(update["changes"])
+    n = len(update.get("changes", []))
     return f"Applied {n} edit{'s' * (n != 1)}"
 
 

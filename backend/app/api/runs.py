@@ -46,7 +46,9 @@ async def ingest(body: IngestRequest) -> dict:
 
 
 @router.get("/runs/{thread_id}/stream")
-async def stream(thread_id: str):
+async def stream(thread_id: str, until: str | None = None):
+    """SSE trace. Stays open through execution by default; ``?until=review`` ends it at review_ready
+    (used by tests, whose in-process client cannot read a stream that stays open)."""
     try:
         await pipeline.ensure_channel(thread_id)
     except KeyError:
@@ -55,6 +57,8 @@ async def stream(thread_id: str):
     async def events():
         async for e in runs.subscribe(thread_id):
             yield {"event": e.type, "data": e.model_dump_json()}
+            if until == "review" and e.type in ("review_ready", "error"):
+                return
 
     return EventSourceResponse(events(), ping=15)
 

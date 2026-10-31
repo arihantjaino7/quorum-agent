@@ -78,8 +78,9 @@ async def run(state: dict) -> dict:
 
 
 def describe(update: dict) -> str:
-    n = len(update["ripples"])
-    tasks = len({r["task"]["id"] for r in update["ripples"]})
+    ripples = update.get("ripples", [])
+    n = len(ripples)
+    tasks = len({r["task"]["id"] for r in ripples})
     return f"{tasks} existing task{'s' * (tasks != 1)} affected; {n} change{'s' * (n != 1)} proposed" if n else "No existing work affected"
 
 

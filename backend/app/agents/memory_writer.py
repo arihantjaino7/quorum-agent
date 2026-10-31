@@ -72,7 +72,7 @@ async def run(state: dict) -> dict:
 
 
 def describe(update: dict) -> str:
-    n = len(update["result"]["superseded_ids"])
+    n = len(update.get("result", {}).get("superseded_ids", []))
     return f"Memory updated; {n} earlier decision{'s' * (n != 1)} retired" if n else "Memory updated"
 
 

@@ -53,11 +53,11 @@ def _extract(**kw):
                                rationale="", source_quote="Rahul said Android is back in for v1")],
         tasks=[
             TaskOut(title="Redo onboarding", owner="Ananya", due_date="2026-11-11",
-                    raw_due_phrase="by, uh, next Wednesday", source_quote="Ananya will redo onboarding"),
+                    raw_due_phrase="by, uh, next Wednesday", source_quote="Ananya will redo onboarding", depends_on_topic=None),
             TaskOut(title="Send investor update", owner="I", due_date=None, raw_due_phrase="on Monday",
-                    source_quote="Priya sends the investor update Monday"),
+                    source_quote="Priya sends the investor update Monday", depends_on_topic=None),
             TaskOut(title="Look at analytics", owner=None, due_date=None, raw_due_phrase="",
-                    source_quote="someone should look at analytics."),
+                    source_quote="someone should look at analytics.", depends_on_topic=None),
         ], **kw)
     return extractor.postprocess(out, raw_text=RAW, meeting=MEETING, people=["Ananya", "Priya", "Rahul"])
 
@@ -120,7 +120,7 @@ def test_unrecorded_input_without_groq_fails_with_a_clear_retryable_error(fresh)
     import json
     tid = fresh.post("/api/ingest", json={**{k: MEETING[k] for k in ("project", "title", "date", "speaker", "source_type")},
                                            "text": "a brand new debrief nobody recorded"}).json()["thread_id"]
-    with fresh.stream("GET", f"/api/runs/{tid}/stream") as s:
+    with fresh.stream("GET", f"/api/runs/{tid}/stream?until=review") as s:
         events = [json.loads(line[5:]) for line in s.iter_lines() if line.startswith("data:")]
     err = events[-1]
     assert err["type"] == "error" and err["agent"] == "normalizer"

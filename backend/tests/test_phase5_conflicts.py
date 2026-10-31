@@ -156,7 +156,7 @@ def _review(client, name, title):
     body = {"project": "Pocket", "title": title, "date": "2026-10-31", "speaker": "Priya", "source_type": "voice",
             "text": (BACKEND_DIR / "seed" / f"{name}.txt").read_text()}
     tid = client.post("/api/ingest", json=body).json()["thread_id"]
-    with client.stream("GET", f"/api/runs/{tid}/stream") as s:
+    with client.stream("GET", f"/api/runs/{tid}/stream?until=review") as s:
         for line in s.iter_lines():
             if line.startswith("data:"):
                 e = json.loads(line[5:])

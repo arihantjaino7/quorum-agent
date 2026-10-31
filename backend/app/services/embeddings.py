@@ -29,7 +29,10 @@ def _load():
     try:
         from fastembed import TextEmbedding
 
-        _model = TextEmbedding(s.embedding_model, cache_dir=s.embedding_cache)
+        try:  # a warm cache must never wait on the network (it can hang for minutes behind a proxy)
+            _model = TextEmbedding(s.embedding_model, cache_dir=s.embedding_cache, local_files_only=True)
+        except Exception:  # noqa: BLE001 - first run: download once
+            _model = TextEmbedding(s.embedding_model, cache_dir=s.embedding_cache)
     except Exception as e:  # noqa: BLE001
         _failed = True
         log.warning("[embeddings] model unavailable (%s); memory search falls back to topic matching", e)
