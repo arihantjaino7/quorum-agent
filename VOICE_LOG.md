@@ -127,3 +127,7 @@ Format:
 > **Failure:** Stop + retry endpoint (Recommended)
 >
 > **Double approve / expiry:** First wins, never expire (Recommended)
+
+## [Claude Code] 2026-10-31 08:48 UTC — How to start phase 3
+
+> Tell me what I have to do step by step to start phase three.
