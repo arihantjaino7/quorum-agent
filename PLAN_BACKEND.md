@@ -85,7 +85,7 @@ golden expectations, and the self-enabling golden test.
   policy currently blocks that host**, so either add `api.groq.com` under Allowed domains in the environment's
   Network access settings, or record on your laptop and commit the recordings.
 
-### Phase 4: Normalizer + extractor
+### ✅ Phase 4: Normalizer + extractor (done)
 - **Build:** the normalizer (fast model) → `clean_text` + `Correction[]`; the extractor (strong model) →
   decisions with `topic_key` (prompted with existing keys from memory), tasks, and questions. A **deterministic
   date resolver** in Python ("next Wednesday", "Monday", "the 20th", "Nov 28th") checks and overrides the
@@ -172,6 +172,8 @@ mocks) and replace the screens. Known bugs from the 31 Oct live check, to fix in
 - **Test:** fixtures for each format → identical speaker-attributed text; audio skips cleanly without a key.
 
 ### Phase 15: Demo hardening
+- Note from Phase 4: the seed cleanup recording was made by the backup model (qwen hit its free-tier cap), so its
+  clean text reads slightly stiffly ("Priya said quick debrief"). Re-record when qwen has quota, then eyeball the output.
 - Record replays for every demo utterance, including the voice-edit and Ask lines you'll actually say;
   `scripts/rehearse.py` runs the whole 2-minute demo headless and prints timings. Failure drills: no wifi, no
   Notion, Groq 429. Latency budget: review_ready in under 8 seconds live, under 1 second on replay.

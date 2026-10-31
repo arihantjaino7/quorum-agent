@@ -45,6 +45,15 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
   `codex/quorum-frontend-prototype`). Codex only does small, self-contained tasks that Claude writes up for the user to hand over.
 - **UI redesign:** one-screen "cockpit" layout (you said | agents → result | memory, approve bar at the bottom).
   Visual style is **not decided yet**, so ask the user before styling. Order: backend Phases 4–5 first, then the UI.
+- `source_quote` = the **exact spoken words** from the raw text. If the model's quote isn't found verbatim, snap it to
+  the closest sentence of the raw text (logged).
+- Transcripts ("Name: line") get **light cleanup**: speaker lines and attributions are kept; only fillers and small talk
+  are removed, and dates are resolved. Voice debriefs get full cleanup.
+- Fillers appear as **one summary correction** ("Removed N fillers: um, uh, …"), never one per word.
+- qwen free-tier "request too large" (1,000 output tokens/min cap): the fast-tier call is retried once on the strong
+  model (gpt-oss-120b @low), with an `agent_progress` note "qwen over free-tier limit; using backup model".
+- Dates: a deterministic Python resolver (`services/dates.py`) checks the LLM's ISO dates and overrides them when it
+  can parse the phrase.
 
 ## Hackathon
 Product Space × Wispr Flow "Agentic AI Hackathon". Build by voice; the product's main input is speech via Wispr Flow.

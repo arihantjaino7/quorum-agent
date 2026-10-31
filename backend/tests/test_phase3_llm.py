@@ -194,6 +194,39 @@ def test_request_too_large_fails_fast(env, fake):
     assert len(calls) == 1
 
 
+TOO_LARGE = "Error code: 429 - Request too large for model on output tokens per minute (OTPM): " \
+            "Limit 1000, Requested 1015. 'code': 'rate_limit_exceeded'"
+
+
+def test_fast_tier_too_large_falls_back_to_strong_model(env, fake):
+    env.groq_reasoning_strong = "low"
+    seen = []
+    calls = fake(Exception(TOO_LARGE), ok("from backup"))
+    token = llm.progress.set(seen.append)
+    try:
+        assert run(llm.structured("normalizer", "fast", Out, MSGS)).answer == "from backup"
+    finally:
+        llm.progress.reset(token)
+    assert [c["model"] for c in calls] == [llm.model_for("fast"), llm.model_for("strong")]
+    assert calls[1]["reasoning"] == "low"
+    assert seen and "backup model" in seen[0]
+
+
+def test_fallback_recording_names_the_model_actually_used(env, fake, tmp_path):
+    env.quorum_record = True
+    fake(Exception(TOO_LARGE), ok())
+    run(llm.structured("normalizer", "fast", Out, MSGS))
+    rec = json.loads(next(tmp_path.rglob("*.json")).read_text())
+    assert rec["model"] == llm.model_for("strong") and rec["tier"] == "fast"
+
+
+def test_strong_tier_too_large_has_no_fallback(env, fake):
+    calls = fake(Exception(TOO_LARGE), ok())
+    with pytest.raises(llm.RequestTooLarge):
+        run(llm.structured("extractor", "strong", Out, MSGS))
+    assert len(calls) == 1
+
+
 def test_reasoning_effort_comes_from_config(env, fake):
     env.groq_reasoning_strong = "low"
     calls = fake(ok())

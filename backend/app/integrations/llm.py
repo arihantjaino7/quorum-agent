@@ -10,6 +10,8 @@
   stage never freezes for minutes.
 - Rate limits (429): if Groq's suggested wait fits within GROQ_TIMEOUT_S, wait (reported through the
   ``progress`` hook as "waiting for Groq…") and retry; otherwise fail with a clear rate-limit error.
+- A fast-tier call that Groq refuses as "request too large" (free-tier output cap) is retried once on
+  the strong model.
 - Groq availability: GROQ_API_KEY if set, otherwise a one-time probe of the model list (the key may be a
   network secret that the outbound proxy attaches).
 """
@@ -51,6 +53,10 @@ class LLMUnavailable(RuntimeError):
 
 class LLMFailed(RuntimeError):
     """Groq answered, but not with valid output, after all retries (or it timed out)."""
+
+
+class RequestTooLarge(LLMFailed):
+    """Groq refused the request up front: it exceeds the model's free-tier per-minute output cap."""
 
 
 # ---------------------------------------------------------------- availability
@@ -161,7 +167,7 @@ async def _live(agent: str, model: str, schema: type[BaseModel], messages: list[
         except Exception as e:  # noqa: BLE001
             wait = rate_limit_wait(e)
             if wait is None and "rate_limit_exceeded" in str(e):
-                raise LLMFailed(f"{agent}: request too large for Groq's free-tier per-minute limit") from e
+                raise RequestTooLarge(f"{agent}: request too large for Groq's free-tier per-minute limit") from e
             if wait is not None:
                 if wait > s.groq_timeout_s or attempt == s.groq_max_retries:
                     raise LLMFailed(f"{agent}: Groq rate limit (free tier); try again in {wait:.0f}s") from e
@@ -219,7 +225,17 @@ async def structured(agent: str, tier: Tier, schema: type[BaseModel], messages: 
         )
 
     t0 = time.perf_counter()
-    out = await _live(agent, model, schema, messages, reasoning_for(tier))
+    try:
+        out = await _live(agent, model, schema, messages, reasoning_for(tier))
+    except RequestTooLarge:
+        backup = model_for("strong")
+        if tier != "fast" or backup == model:
+            raise
+        log.warning("[llm] %s: %s over its free-tier output cap; retrying on %s", agent, model, backup)
+        _report("qwen over free-tier limit; using backup model" if "qwen" in model
+                else "Fast model over free-tier limit; using backup model")
+        model = backup
+        out = await _live(agent, model, schema, messages, reasoning_for("strong"))
     latency_ms = int((time.perf_counter() - t0) * 1000)
     if s.quorum_record:
         path = store.save(agent, key, tier=tier, model=model, schema=schema, messages=messages,

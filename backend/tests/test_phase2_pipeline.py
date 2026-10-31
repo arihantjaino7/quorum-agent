@@ -6,6 +6,15 @@ import pytest
 
 from app.graph import POST_REVIEW, PRE_REVIEW
 
+@pytest.fixture(autouse=True)
+def stub_agents(monkeypatch):
+    """These tests cover pipeline plumbing, so every agent runs as a pass-through stub (no LLM, no recordings)."""
+    import importlib
+
+    for name in PRE_REVIEW + POST_REVIEW + ["review_editor"]:
+        monkeypatch.setattr(importlib.import_module(f"app.agents.{name}"), "IMPLEMENTED", False)
+
+
 BODY = {"project": "Pocket", "title": "Investor sync debrief", "date": "2026-10-31",
         "speaker": "Priya", "source_type": "voice", "text": "so um Rahul said Android is back in"}
 

@@ -1,0 +1,59 @@
+{
+  "key": "64b2b2a3d9fca6426a7128f0fa4b459c3bf8fc2f40f6fbec1f4914055de44d93",
+  "agent": "normalizer",
+  "tier": "fast",
+  "model": "openai/gpt-oss-120b",
+  "schema": "NormalizerOut",
+  "recorded_at": "2026-10-31T11:17:22Z",
+  "latency_ms": 3504,
+  "messages": [
+    {
+      "role": "system",
+      "content": "You clean up a dictated meeting debrief so it can be turned into decisions and tasks.\n\nRules:\n- Remove filler words (um, uh, like, basically, yeah, so). Report them as ONE correction of kind \"filler\"\n  whose original lists the removed words, comma-separated, and whose resolved is \"\".\n- Remove digressions unrelated to the project's decisions or work (office chatter, small talk). Report each as\n  kind \"digression\" with the full digression as original and resolved \"\".\n- Apply self-corrections (\"X, no wait, Y\" means Y). Report each as kind \"self_correction\": original is the\n  spoken phrase including the correction, resolved is the final value.\n- Resolve every relative or partial date (\"next Wednesday\", \"Monday\", \"the 20th\", \"December 1st\") against the\n  meeting date and calendar below. Report each as kind \"date_resolution\": original is the spoken phrase,\n  resolved is \"<weekday> <ISO date>\", e.g. \"Wednesday 2026-11-04\". \"Next <weekday>\" means the first such\n  weekday after the meeting date; a bare weekday means the next one after the meeting date; \"the 20th\" means\n  the next 20th on or after the meeting date.\n- In clean_text keep every decision, task, owner, reason and date; write resolved dates in clean_text as\n  \"<weekday> <ISO date> (said: '<original phrase>')\". Keep the speaker's attributions (\"Rahul said ...\").\n- Do not invent anything. Keep it in the first person of the speaker where they spoke that way.\n\nMeeting date: Saturday 2026-10-31.\nCalendar from the meeting date onward:\n  Sat 2026-10-31  (meeting day)\n  Sun 2026-11-01\n  Mon 2026-11-02\n  Tue 2026-11-03\n  Wed 2026-11-04\n  Thu 2026-11-05\n  Fri 2026-11-06\n  Sat 2026-11-07\n  Sun 2026-11-08\n  Mon 2026-11-09\n  Tue 2026-11-10\n  Wed 2026-11-11\n  Thu 2026-11-12\n  Fri 2026-11-13\n  Sat 2026-11-14\n  Sun 2026-11-15\n  Mon 2026-11-16\n  Tue 2026-11-17\n  Wed 2026-11-18\n  Thu 2026-11-19\n  Fri 2026-11-20\n  Sat 2026-11-21\n  Sun 2026-11-22\n  Mon 2026-11-23\n  Tue 2026-11-24\n  Wed 2026-11-25\n  Thu 2026-11-26\n  Fri 2026-11-27\n  Sat 2026-11-28\n  Sun 2026-11-29\n  Mon 2026-11-30\n  Tue 2026-12-01\n  Wed 2026-12-02\n  Thu 2026-12-03\n  Fri 2026-12-04"
+    },
+    {
+      "role": "user",
+      "content": "Debrief dictated by Priya:\n\nokay so um quick debrief from the investor sync today. so basically Rahul said the investors really want Android at launch, like they were pretty firm about it, so Android is back in for v1, we're not pushing it to v2 anymore. and because of that the launch moves to, uh, December 1st, no wait, November 28th, yeah the 28th. Ananya is going to redo the onboarding for Android, she said she can have it by, uh, next Wednesday. Rahul is taking the Play Store listing, he'll have that done by the 20th. oh and side note the coffee machine on the third floor is broken again, someone really needs to call facilities, it's like the third time this month. anyway. on payments we're switching to Stripe because the Razorpay KYC is just way too slow, we can't wait on it before launch. and I'll send the investor update on Monday. yeah I think that's it.\n"
+    }
+  ],
+  "output": {
+    "clean_text": "Priya said quick debrief. Rahul said the investors really want Android at launch, so Android is back in for v1, not pushed to v2. The launch moves to November 28th (Saturday 2026-11-28 (said: 'November 28th')). Ananya is going to redo the onboarding for Android, she said she can have it by Wednesday 2026-11-04 (said: 'next Wednesday'). Rahul is taking the Play Store listing, he'll have that done by Friday 2026-11-20 (said: 'the 20th'). On payments we're switching to Stripe because the Razorpay KYC is too slow. I will send the investor update on Monday 2026-11-02 (said: 'Monday').",
+    "corrections": [
+      {
+        "original": "okay, so, um, basically, like, yeah, uh, uh",
+        "resolved": "",
+        "kind": "filler"
+      },
+      {
+        "original": "oh and side note the coffee machine on the third floor is broken again, someone really needs to call facilities, it's like the third time this month.",
+        "resolved": "",
+        "kind": "digression"
+      },
+      {
+        "original": "December 1st, no wait, November 28th, yeah the 28th",
+        "resolved": "November 28th",
+        "kind": "self_correction"
+      },
+      {
+        "original": "next Wednesday",
+        "resolved": "Wednesday 2026-11-04",
+        "kind": "date_resolution"
+      },
+      {
+        "original": "the 20th",
+        "resolved": "Friday 2026-11-20",
+        "kind": "date_resolution"
+      },
+      {
+        "original": "Monday",
+        "resolved": "Monday 2026-11-02",
+        "kind": "date_resolution"
+      },
+      {
+        "original": "November 28th",
+        "resolved": "Saturday 2026-11-28",
+        "kind": "date_resolution"
+      }
+    ]
+  }
+}

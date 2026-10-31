@@ -280,3 +280,19 @@ Make sure to comment and push all the changes whenever you do on GitHub, and do 
 > **Timing:** Phases 4–5 first, then UI (Recommended)
 >
 > **Models (after bake-off):** 120b@low strong + qwen fast (Recommended)
+
+## [Claude Code] 2026-10-31 11:08 UTC — Next step (go phase 4)
+
+> Next, now what to do? Do your part.
+
+## [Claude Code] 2026-10-31 11:11 UTC — Phase 4 decisions (dictated answers)
+
+> **Quotes:** Exact spoken words (Recommended)
+>
+> **Quote check:** Snap to closest sentence (Recommended)
+>
+> **Transcripts:** Light cleanup (Recommended)
+>
+> **Fillers:** One summary line (Recommended)
+>
+> **qwen free-tier limit:** Auto-fallback to 120b (Recommended)

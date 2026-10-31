@@ -1,29 +1,87 @@
 {
   "_comment": "Golden expectations for the stage demo. Enforced by tests/test_golden_debrief2.py. Edit only on purpose.",
-  "meeting": {"project": "Pocket", "title": "Investor sync debrief", "date": "2026-10-31", "speaker": "Priya", "source_type": "voice"},
+  "meeting": {
+    "project": "Pocket",
+    "title": "Investor sync debrief",
+    "date": "2026-10-31",
+    "speaker": "Priya",
+    "source_type": "voice"
+  },
   "corrections_must_include": [
-    {"kind": "self_correction", "original_contains": "December 1st", "resolved_contains": "28"},
-    {"kind": "date_resolution", "original_contains": "next Wednesday", "resolved_date": "2026-11-04"},
-    {"kind": "date_resolution", "original_contains": "Monday", "resolved_date": "2026-11-02"},
-    {"kind": "digression", "original_contains": "coffee"}
+    {
+      "kind": "self_correction",
+      "original_contains": "December 1st",
+      "resolved_contains": "28"
+    },
+    {
+      "kind": "date_resolution",
+      "original_contains": "next Wednesday",
+      "resolved_date": "2026-11-04"
+    },
+    {
+      "kind": "date_resolution",
+      "original_contains": "Monday",
+      "resolved_date": "2026-11-02"
+    },
+    {
+      "kind": "digression",
+      "original_contains": "coffee"
+    }
   ],
-  "clean_text_must_not_contain": ["coffee", "facilities"],
+  "clean_text_must_not_contain": [
+    "coffee",
+    "facilities"
+  ],
   "decisions_topics": {
-    "platform_scope": {"made_by": "Rahul", "statement_contains": "Android"},
-    "launch_date": {"statement_contains": "28"},
-    "payments_provider": {"statement_contains": "Stripe"}
+    "platform_scope": {
+      "made_by": "Rahul",
+      "statement_contains": "Android"
+    },
+    "launch_date": {
+      "statement_contains": "28"
+    },
+    "payments_provider": {
+      "statement_contains": "Stripe",
+      "made_by": "Priya"
+    }
   },
   "tasks": [
-    {"owner": "Ananya", "title_contains": "onboarding", "due_date": "2026-11-04", "raw_due_phrase_contains": "next Wednesday"},
-    {"owner": "Rahul", "title_contains": "Play Store", "due_date": "2026-11-20", "raw_due_phrase_contains": "20th"},
-    {"owner": "Priya", "title_contains": "investor update", "due_date": "2026-11-02", "raw_due_phrase_contains": "Monday"}
+    {
+      "owner": "Ananya",
+      "title_contains": "onboarding",
+      "due_date": "2026-11-04",
+      "raw_due_phrase_contains": "next Wednesday"
+    },
+    {
+      "owner": "Rahul",
+      "title_contains": "Play Store",
+      "due_date": "2026-11-20",
+      "raw_due_phrase_contains": "20th"
+    },
+    {
+      "owner": "Priya",
+      "title_contains": "investor update",
+      "due_date": "2026-11-02",
+      "raw_due_phrase_contains": "Monday"
+    }
   ],
   "conflicts": {
     "semantic_count": 3,
-    "old_topics": ["platform_scope", "launch_date", "payments_provider"],
-    "types": ["reversal", "contradiction"]
+    "old_topics": [
+      "platform_scope",
+      "launch_date",
+      "payments_provider"
+    ],
+    "types": [
+      "reversal",
+      "contradiction"
+    ]
   },
   "ripples_must_include": [
-    {"kind": "rescope", "task_owner": "Ananya", "task_title_contains": "onboarding"}
+    {
+      "kind": "rescope",
+      "task_owner": "Ananya",
+      "task_title_contains": "onboarding"
+    }
   ]
 }
