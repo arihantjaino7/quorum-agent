@@ -131,3 +131,7 @@ Format:
 ## [Claude Code] 2026-10-31 08:48 UTC — How to start phase 3
 
 > Tell me what I have to do step by step to start phase three.
+
+## [Claude Code] 2026-10-31 08:51 UTC — Can't find step 2 settings
+
+> But I can't find the options for step two, which you are asking me to do.
