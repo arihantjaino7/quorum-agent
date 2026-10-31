@@ -1,29 +1,28 @@
-import { useState } from 'react'
-import { NavLink, Outlet, ScrollRestoration, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, NavLink, Outlet, ScrollRestoration, useLocation, useNavigate } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowUpRight, AudioLines, Bell, ChevronDown, Clock3, Moon, MoreHorizontal, Sun, X } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ArrowUpRight, Bell, ChevronDown, Clock3, Moon, Plus, RotateCcw, Sun, X } from 'lucide-react'
+import Lenis from 'lenis'
+import 'lenis/dist/lenis.css'
+import '@/home/home.css'
+import './inner-scale.css'
+import './inner.css'
 import { api, useMocks } from '@/api'
-import { Button } from '@/components/ui/button'
-import { Avatar } from '@/components/shared'
 import { useApp } from '@/lib/app-context'
 import { errorMessage, formatDate } from '@/lib/utils'
 
-const navigation = [
-  { path: '/capture', name: 'Capture', detail: 'Start with your own words', number: '01' },
-  { path: '/review', name: 'Review & resolve', detail: 'Your judgment, in the loop', number: '02' },
-  { path: '/memory', name: 'Decision memory', detail: 'The story behind every call', number: '03' },
-  { path: '/ask', name: 'Ask Quorum', detail: 'Answers that show their work', number: '04' },
-  { path: '/board', name: 'Team board', detail: 'From a promise to progress', number: '05' },
-  { path: '/digest', name: 'Weekly digest', detail: 'Everyone on the same page', number: '06' },
+const NAV = [
+  { to: '/memory', label: 'Memory' }, { to: '/ask', label: 'Ask' }, { to: '/board', label: 'Board' }, { to: '/digest', label: 'Digest' },
 ]
 
+/** Shared shell for every page after the first: the home page's floating bar, ambient light and smooth scrolling. */
 export function Layout() {
   const { project, setProject, theme, toggleTheme, notify } = useApp()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const location = useLocation()
   const [clockOpen, setClockOpen] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
   const [clockInput, setClockInput] = useState('2026-11-03T09:00')
   const clock = useQuery({ queryKey: ['quorum', 'clock'], queryFn: () => api.getClock() })
   const projects = useQuery({ queryKey: ['quorum', 'projects'], queryFn: () => api.getProjects() })
@@ -35,48 +34,60 @@ export function Layout() {
     notify(result.sent.length ? `${result.sent.length} reminder${result.sent.length > 1 ? 's' : ''} ${useMocks ? 'recorded in the demo log' : 'processed'}.` : 'No new reminders due within the next 24 hours.')
   }, onError: (error) => notify(errorMessage(error)) })
   const reset = useMutation({ mutationFn: () => api.resetDemo(), onSuccess: () => {
-    try { localStorage.removeItem('quorum-last-run') } catch { /* Reset is still complete in memory. */ }
-    queryClient.clear(); setMenuOpen(false); navigate('/capture'); notify('Fresh start. The original Pocket meeting is back in memory.')
+    try { localStorage.removeItem('quorum-last-run'); localStorage.removeItem('quorum-unlocked') } catch { /* Reset is still complete in memory. */ }
+    queryClient.clear(); navigate('/'); notify('Fresh start. The original Pocket meeting is back in memory.')
   }, onError: (error) => notify(errorMessage(error)) })
-  return <div className="app-shell">
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const instance = new Lenis({ autoRaf: true, lerp: 0.09 })
+    return () => instance.destroy()
+  }, [])
+
+  return <div className="home inner" onMouseMove={(e) => {
+    e.currentTarget.style.setProperty('--px', `${e.clientX}px`); e.currentTarget.style.setProperty('--py', `${e.clientY}px`)
+  }}>
+    <div className="ambient" aria-hidden><span className="blob b1" /><span className="blob b2" /><span className="blob b3" /><span className="grid" /><span className="cursor-glow" /></div>
     <a className="skip-link" href="#main-content">Skip to content</a>
-    <aside className="sidebar" aria-label="Workspace navigation">
-      <NavLink to="/" className="brand" aria-label="Quorum home"><span className="brand-mark">q<span /></span><span>quorum<span className="brand-period">.</span></span></NavLink>
-      <div className="workspace-caption">MEETINGS THAT REMEMBER</div>
-      <div className="sidebar-label">YOUR WORKSPACE <span>↗</span></div>
-      <nav className="nav-list">{navigation.map((item) => {
-        const active = location.pathname.startsWith(item.path) || (item.path === '/review' && location.pathname.startsWith('/runs'))
-        return <NavLink className={`nav-item ${active ? 'active' : ''}`} key={item.path} to={item.path} aria-current={active ? 'page' : undefined}>
-          <span className="nav-number">{item.number}</span><span className="nav-copy"><strong>{item.name}</strong><small>{item.detail}</small></span>
-          {active && <span className="nav-active-dot" />}
-        </NavLink>
-      })}</nav>
-      <div className="sidebar-bottom">
-        <div className="workspace-note"><AudioLines size={17} /><p>Good ideas deserve<br /><strong>a better memory.</strong></p></div>
-        <div className="project-card"><span className="project-symbol">P</span><div><strong>{project}</strong><span>Product team workspace</span></div><ChevronDown size={14} /></div>
-        <div className="sidebar-foot"><div className="avatar-stack"><Avatar name="Priya" small /><Avatar name="Rahul" small /><Avatar name="Ananya" small /></div><span>Made for the follow-through.</span></div>
-      </div>
-    </aside>
-    <div className="main-shell">
-      <header className="topbar">
-        <div className="breadcrumbs"><span>Workspace</span><span className="breadcrumb-slash">/</span><label className="project-select"><select aria-label="Select project" value={project} onChange={(e) => setProject(e.target.value)}>
-          {(projects.data ?? [{ name: project }]).map((p) => <option key={p.name} value={p.name}>{p.name}</option>)}
-        </select><ChevronDown size={12} /></label></div>
-        <div className="topbar-actions">
-          <span className="mode-badge"><i />{useMocks ? 'Demo workspace' : 'Connected workspace'}</span>
-          <div className="popover-anchor"><button className="clock-button" onClick={() => { setClockOpen(!clockOpen); setMenuOpen(false) }} aria-expanded={clockOpen} aria-controls="clock-popover"><Clock3 size={13} /><span>Now: {clock.data ? formatDate(clock.data.now, { year: 'numeric' }) : '…'}</span><ChevronDown size={11} /></button>
-            {clockOpen && <section className="popover clock-popover" id="clock-popover" aria-label="Demo clock"><div className="section-heading"><h3>A little time travel.</h3><button aria-label="Close demo clock" onClick={() => setClockOpen(false)}><X size={15} /></button></div><p>Move the demo clock to see upcoming deadlines and reminders.</p><form onSubmit={(e) => { e.preventDefault(); clockMutation.mutate(`${clockInput}:00`) }}><label className="field-label" htmlFor="demo-clock">Jump to</label><input id="demo-clock" type="datetime-local" value={clockInput} onChange={(e) => setClockInput(e.target.value)} required /><Button type="submit" size="sm" disabled={clockMutation.isPending}>Update clock<ArrowUpRight size={13} /></Button></form>{clockMutation.error && <p className="inline-error" role="alert">{errorMessage(clockMutation.error)}</p>}</section>}
-          </div>
-          <button className="icon-button reminder-button" title="Run reminders" aria-label="Run reminders" disabled={reminders.isPending} onClick={() => reminders.mutate()}><Bell size={16} /></button>
-          <button className="icon-button" aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`} onClick={toggleTheme}>{theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}</button>
-          <div className="popover-anchor"><button className="icon-button" aria-label="More workspace actions" aria-expanded={menuOpen} onClick={() => { setMenuOpen(!menuOpen); setClockOpen(false) }}><MoreHorizontal size={18} /></button>
-            {menuOpen && <div className="popover workspace-menu"><strong>Demo controls</strong><p>Check reminders or start over with the sample meeting. This affects the {useMocks ? 'local demo' : 'connected backend'}.</p><div className="button-row"><Button variant="outline" size="sm" disabled={reminders.isPending} onClick={() => reminders.mutate()}><Bell size={12} />Run reminders</Button><Button variant="outline" size="sm" disabled={reset.isPending} onClick={() => reset.mutate()}>Reset demo workspace</Button></div></div>}
-          </div>
+    <header className="home-bar">
+      <Link to="/" className="brand" aria-label="Quorum home"><span className="brand-mark">q<span /></span><span>quorum<span className="brand-period">.</span></span></Link>
+      <nav className="home-nav" aria-label="Workspace">
+        {NAV.map((n) => {
+          const active = location.pathname.startsWith(n.to)
+          return <NavLink key={n.to} to={n.to} onClick={() => setClockOpen(false)} className={active ? 'is-active' : ''} aria-current={active ? 'page' : undefined}>
+            {active && <motion.span className="nav-pill" layoutId="nav-pill" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+            <span>{n.label}</span>
+          </NavLink>
+        })}
+      </nav>
+      <div className="home-bar-actions">
+        {(projects.data?.length ?? 0) > 1 && <label className="inner-select"><select aria-label="Select project" value={project} onChange={(e) => setProject(e.target.value)}>
+          {projects.data!.map((p) => <option key={p.name} value={p.name}>{p.name}</option>)}</select><ChevronDown size={12} /></label>}
+        <div className="popover-anchor">
+          <button type="button" className="clock-pill" onClick={() => setClockOpen(!clockOpen)} aria-expanded={clockOpen} aria-controls="clock-popover">
+            <Clock3 size={14} /><span>{clock.data ? formatDate(clock.data.now, { year: 'numeric' }) : '…'}</span></button>
+          <AnimatePresence>{clockOpen && <motion.section className="popover clock-popover" id="clock-popover" aria-label="Demo clock"
+            initial={{ opacity: 0, y: -8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.25 }}>
+            <div className="section-heading"><h3>A little time travel.</h3><button type="button" aria-label="Close demo clock" onClick={() => setClockOpen(false)}><X size={15} /></button></div>
+            <p>Move the demo clock to see upcoming deadlines and reminders.</p>
+            <form onSubmit={(e) => { e.preventDefault(); clockMutation.mutate(`${clockInput}:00`) }}>
+              <label className="field-label" htmlFor="demo-clock">Jump to</label>
+              <input id="demo-clock" type="datetime-local" value={clockInput} onChange={(e) => setClockInput(e.target.value)} required />
+              <button type="submit" className="run-btn small" disabled={clockMutation.isPending}>Update clock<ArrowUpRight size={13} /></button>
+            </form>
+            {clockMutation.error && <p className="inline-error" role="alert">{errorMessage(clockMutation.error)}</p>}
+          </motion.section>}</AnimatePresence>
         </div>
-      </header>
-      <main id="main-content" tabIndex={-1} className="stage"><Outlet /></main>
-      <ScrollRestoration />
-      <footer className="main-footer"><span><span className="tiny-q">q</span> A little less lost between meetings.</span><span>Quorum · Built with voice.</span></footer>
-    </div>
+        <button type="button" className="icon-pill" title="Run reminders" aria-label="Run reminders" disabled={reminders.isPending} onClick={() => reminders.mutate()}><Bell size={15} /></button>
+        <button type="button" className="icon-pill" title="Reset the demo" aria-label="Reset the demo" disabled={reset.isPending} onClick={() => reset.mutate()}><RotateCcw size={15} /></button>
+        <button type="button" className="icon-pill" aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`} onClick={toggleTheme}>{theme === 'light' ? <Moon size={15} /> : <Sun size={15} />}</button>
+        <Link to="/" className="run-btn small new-debrief"><Plus size={14} />New debrief</Link>
+      </div>
+    </header>
+    <main id="main-content" tabIndex={-1} className="inner-main">
+      <motion.div key={location.pathname} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}><Outlet /></motion.div>
+    </main>
+    <ScrollRestoration />
+    <footer className="inner-foot"><span><span className="tiny-q">q</span> A little less lost between meetings.</span><span>Quorum · Built with voice.</span></footer>
   </div>
 }

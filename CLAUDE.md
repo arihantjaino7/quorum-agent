@@ -86,6 +86,10 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
   testers know by Monday." One decision, one task, one conflict (launch date), one affected task (landing page copy).
   Its saved conflict answer was trimmed by hand to that single task (see `curated_note` in the recording). debrief2 stays as
   the full regression test. The normalizer now re-checks dates written inside the clean text.
+- **Inner pages (31 Oct):** Memory, Ask, Board and Digest share the home page's layout: floating top bar with always-visible
+  nav pills (sliding active pill), demo clock pill, reminders, reset, theme and "New debrief"; rising two-line headlines;
+  cards that rise in one after another; Lenis smooth scrolling. The old sidebar shell is gone. Small old type was lifted by
+  `frontend/src/app/inner-scale.css` (generated once from `index.css`).
 
 ## Hackathon
 Product Space × Wispr Flow "Agentic AI Hackathon". Build by voice; the product's main input is speech via Wispr Flow.

@@ -1,0 +1,105 @@
+/* Generated once from index.css: the old pages used 9-13px type. Lifted here so they read at the home page's scale. */
+.inner .field-label { font-size: 13.5px; }
+.inner .eyebrow { font-size: 11.5px; }
+.inner .main-footer { font-size: 11.5px; }
+.inner .button { font-size: 14px; }
+.inner .button-sm { font-size: 12.5px; }
+.inner .text-button { font-size: 12.5px; }
+.inner .segmented > button { font-size: 12.5px; }
+.inner .segmented.compact > button { font-size: 11.5px; }
+.inner .tiny-label { font-size: 11px; }
+.inner .mini-eyebrow { font-size: 11px; }
+.inner .tag { font-size: 11px; }
+.inner .muted { font-size: 13.5px; }
+.inner .source-link { font-size: 11.5px; }
+.inner .subtle-count { font-size: 11px; }
+.inner .section-intro { font-size: 13.5px; }
+.inner .subsection-label { font-size: 11px; }
+.inner .subsection-label > span { font-size: 11px; }
+.inner .meeting-fields input,
+.inner .meeting-fields select { font-size: 11.5px; }
+.inner .meeting-fields input::placeholder { font-size: 11.5px; }
+.inner .human-check { font-size: 11.5px; }
+.inner .mock-hint { font-size: 11px; }
+.inner .recent-meeting-copy strong { font-size: 13.5px; }
+.inner .recent-meeting-copy > span { font-size: 11.5px; }
+.inner .attached-file span { font-size: 12.5px; }
+.inner .inline-error { font-size: 13.5px; }
+.inner .state-panel p { font-size: 14px; }
+.inner .quiet-empty { font-size: 13.5px; }
+.inner .mini-pipeline { font-size: 11px; }
+.inner .conflict-count { font-size: 11.5px; }
+.inner .conflict-section .section-heading > .text-button { font-size: 11.5px; }
+.inner .conflict-tab-icon { font-size: 11px; }
+.inner .conflict-tabs strong { font-size: 12.5px; }
+.inner .tab-outcome { font-size: 11px; }
+.inner .severity { font-size: 11px; }
+.inner .new-decision-caption { font-size: 11.5px; }
+.inner .conflict-explanation { font-size: 14px; }
+.inner .conflict-detail-foot > span { font-size: 11.5px; }
+.inner .resolution-control button { font-size: 11.5px; }
+.inner .document-meta > span { font-size: 11px; }
+.inner .correction-mark > span { font-size: 11px; }
+.inner .correction-legend > span { font-size: 11px; }
+.inner .correction-legend details { font-size: 11px; }
+.inner .memory-assurance { font-size: 11.5px; }
+.inner .decision-edit-card input { font-size: 13.5px; }
+.inner .decision-attribution { font-size: 11px; }
+.inner .task-title-edit input { font-size: 13.5px; }
+.inner .task-edit-fields input,
+.inner .task-edit-fields select { font-size: 11.5px; }
+.inner .raw-phrase { font-size: 11px; }
+.inner .question-hint { font-size: 11.5px; }
+.inner .voice-edit-input > textarea { font-size: 14px; }
+.inner .voice-examples { font-size: 11px; }
+.inner .voice-examples button { font-size: 11px; }
+.inner .changes-diff p { font-size: 12.5px; }
+.inner .approval-bar strong { font-size: 13.5px; }
+.inner .approval-bar span { font-size: 11.5px; }
+.inner .reject-confirm > span { font-size: 13.5px; }
+.inner .page-tabs > button { font-size: 12.5px; }
+.inner .timeline-date { font-size: 11.5px; }
+.inner .timeline-decision p { font-size: 12.5px; }
+.inner .source-quote { font-size: 12.5px; }
+.inner .source-quote > summary { font-size: 11.5px; }
+.inner .source-quote blockquote { font-size: 13.5px; }
+.inner .superseded-by { font-size: 11.5px; }
+.inner .graph-node-content span { font-size: 11px; }
+.inner .graph-node-content strong { font-size: 14px; }
+.inner .graph-node-content small { font-size: 11.5px; }
+.inner .inline-date-label { font-size: 12.5px; }
+.inner .inline-date-label input { font-size: 12.5px; }
+.inner .snapshot-grid p { font-size: 13.5px; }
+.inner .changed-since p { font-size: 13.5px; }
+.inner .markdown-card { font-size: 14px; }
+.inner .brief-tasks h3 > span { font-size: 14px; }
+.inner .simple-task strong { font-size: 12.5px; }
+.inner .simple-task span { font-size: 11.5px; }
+.inner .radar-topic-head > div > span { font-size: 11px; }
+.inner .radar-list .card > p { font-size: 13.5px; }
+.inner .ask-input-foot > span { font-size: 11.5px; }
+.inner .ask-suggestions p { font-size: 12.5px; }
+.inner .ask-reassurance p span { font-size: 14px; }
+.inner .answer-byline strong { font-size: 13.5px; }
+.inner .answer-byline > span:last-child { font-size: 11.5px; }
+.inner .answer-prose { font-size: 14.5px; }
+.inner .citation-card > div { font-size: 11px; }
+.inner .citation-card blockquote { font-size: 14px; }
+.inner .board-stats { font-size: 12.5px; }
+.inner .board-filters > label { font-size: 11.5px; }
+.inner .board-filters select { font-size: 12.5px; }
+.inner .integration-note { font-size: 11.5px; }
+.inner .owner-column-head > div > span { font-size: 11px; }
+.inner .board-task-title h3 { font-size: 14px; }
+.inner .due-tag { font-size: 11px; }
+.inner .reminder-state { font-size: 11px; }
+.inner .task-source { font-size: 11px; }
+.inner .task-source blockquote { font-size: 12.5px; }
+.inner .tracker-link { font-size: 11.5px; }
+.inner .empty-column p { font-size: 13.5px; }
+.inner .person-picker > button { font-size: 12.5px; }
+.inner .digest-letter-head { font-size: 11px; }
+.inner .digest-task-sections h3 > span { font-size: 13.5px; }
+.inner .digest-signoff { font-size: 12.5px; }
+.inner .digest-signoff strong { font-size: 13.5px; }
+.inner .toast { font-size: 13.5px; }

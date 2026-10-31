@@ -4,19 +4,19 @@ import { ArrowUpRight, CircleAlert, LoaderCircle, RotateCcw } from 'lucide-react
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { errorMessage, formatDate, initials } from '@/lib/utils'
+import { EASE } from '@/home/constants'
+import { RiseWords } from '@/home/motion'
 import type { Task } from '@/types'
 
-export function PageHeading({ number, eyebrow, title, soft, description, children }: {
-  number: string; eyebrow: string; title: string; soft: string; description?: string; children?: ReactNode
+export function PageHeading({ eyebrow, title, soft, description, children }: {
+  number?: string; eyebrow: string; title: string; soft: string; description?: string; children?: ReactNode
 }) {
-  return <div className="page-heading">
-    <span className="ghost-number" aria-hidden="true">{number}</span>
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-      <div className="eyebrow"><span>({number})</span>{eyebrow}</div>
-      <h1>{title}<br /><span>{soft}</span></h1>
-      {description && <p className="lede">{description}</p>}
-      {children}
-    </motion.div>
+  const label = eyebrow.charAt(0) + eyebrow.slice(1).toLowerCase()
+  return <div className="page-hero">
+    <motion.span className="eyebrow-pill" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}><i />{label}</motion.span>
+    <RiseWords className="page-title" delay={0.1} lines={[{ text: title }, { text: soft, muted: true }]} />
+    {description && <motion.p className="hero-sub" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.55, ease: EASE }}>{description}</motion.p>}
+    {children}
   </div>
 }
 export function Avatar({ name, small = false }: { name: string; small?: boolean }) {
