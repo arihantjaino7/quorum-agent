@@ -74,7 +74,7 @@ golden expectations, and the self-enabling golden test.
   run fixture goes live here.
 - **Unlocks Codex:** the live agent trace and the review screen, with real events.
 
-### Phase 3: LLM harness + replay (risk: Groq structured outputs) 🔴
+### ✅ Phase 3: LLM harness + replay (risk: Groq structured outputs) (done)
 - **Build:** `integrations/llm.py`: `structured(tier, Schema, messages)` via langchain-groq
   `with_structured_output`, retries on validation errors, and a timeout. `app/replay`: the key is
   sha256(agent + tier + normalized prompt); `QUORUM_RECORD=1` saves recordings; replay serves them when
@@ -101,6 +101,18 @@ golden expectations, and the self-enabling golden test.
 - **Proves:** cross-meeting memory catches all three reversals and no false positives.
 - **Test:** golden "exactly 3 semantic conflicts against meeting 1" goes green; overload/collision unit tests;
   a negative test (a debrief that agrees with meeting 1 → 0 conflicts).
+
+### Phase 5½: Cockpit UI (frontend redesign) 🎨
+Decided 31 Oct: Claude owns `/frontend`; one-screen cockpit layout; built after Phases 4–5 so it uses real data.
+**The visual style is still open, so ask first.** Keep Codex's plumbing (typed API client, TanStack Query, routes,
+mocks) and replace the screens. Known bugs from the 31 Oct live check, to fix in this phase:
+1. Mock toggle: `.env.development` (`VITE_USE_MOCKS=true`) beats `.env.local`, so turning mocks off requires `.env.development.local`. Fix the defaults and docs.
+2. The "Already in memory" panel labels decisions by position, not `topic_key` (mismatched labels).
+3. After approve, the page refetches `/review`, which returns 409 (console error). Stop refetching once the run is approved.
+4. `agent_progress` (contract v1.3) isn't handled by the SSE client.
+5. Voice-edit suggestions are hard-coded, wrong for this data (Monday = 2 Nov), and shown even with 0 items.
+6. The floating approve bar covers transcript text.
+7. Giant hero headers push the actual work below the fold on every page.
 
 ### Phase 6: Approve path: memory writer + executor
 - **Build:** memory writer (persist approved decisions + embeddings; `superseded_by` lineage; `keep_old` drops

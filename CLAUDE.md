@@ -6,8 +6,8 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
 1. **VOICE_LOG first.** At the start of every task, append the user's exact prompt, verbatim with a UTC
    timestamp, to `VOICE_LOG.md` under a `## [Claude Code] <timestamp> — <label>` heading. Every prompt is
    dictated through Wispr Flow, and the log is our evidence for the judges. Also log answers to clarifying questions.
-2. **Ownership.** Claude Code owns `/backend` and the root files. **Never edit anything in `/frontend`**:
-   OpenAI Codex works there at the same time. Commit only files we own, and stage paths explicitly (no `git add -A`).
+2. **Ownership.** Claude Code owns `/backend`, `/frontend` (since 31 Oct, by the user's decision) and the root files.
+   Codex works only on tasks Claude hands over through the user. Stage paths explicitly (no `git add -A`).
 3. **Contract.** `CONTRACT.md` is the source of truth. Changes are additive only: add the change to the
    Changes block at the top, then tell the user so they can relay it to Codex.
 4. **Phases.** Work one phase of `PLAN_BACKEND.md` at a time. Finish its tests, commit, then stop and wait for "go".
@@ -39,6 +39,12 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
 - Rate limits (429): if Groq's suggested wait is ≤ 30s, wait and retry (counts as a retry) and show "waiting for Groq…"
   in the trace (`agent_progress` event); otherwise fail with a clear rate-limit error + Retry.
 - Groq's own `json_validate_failed` counts as malformed output (retried with feedback).
+- **Models (bake-off winner):** strong = `openai/gpt-oss-120b` at reasoning effort `low`; fast = `qwen/qwen3.8-27b`.
+  `gpt-oss-20b` is unreliable here (invalid JSON, wrong dates). Separate models = separate free-tier quotas.
+- **Frontend ownership changed:** Claude Code now owns `/frontend` too (Codex's prototype merged from
+  `codex/quorum-frontend-prototype`). Codex only does small, self-contained tasks that Claude writes up for the user to hand over.
+- **UI redesign:** one-screen "cockpit" layout (you said | agents → result | memory, approve bar at the bottom).
+  Visual style is **not decided yet**, so ask the user before styling. Order: backend Phases 4–5 first, then the UI.
 
 ## Hackathon
 Product Space × Wispr Flow "Agentic AI Hackathon". Build by voice; the product's main input is speech via Wispr Flow.

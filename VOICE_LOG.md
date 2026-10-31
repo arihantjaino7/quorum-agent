@@ -169,3 +169,21 @@ Format:
 > **Reasoning:** Test low and default (Recommended)
 >
 > **Re-run:** Re-run now, paced (Recommended)
+
+## [Claude Code] 2026-10-31 10:01 UTC — Frontend check + take over UI design
+
+> Frontend is almost really like the code is done. Same thing: you can cross-check whether it was correct or not, and you can implement the main features in that frontend if you think it is the right time. First of all, check whether everything is working, then we move to the advanced layout option. Also, Codex is not empty. If you have anything for Codex, just tell me, and I will give it to him.
+>
+> Now, the further UI work has to be done by you because Codex's imagination is very, very poor. I don't like it at all, so you have to design a good layout, good UI for finalization.
+
+## [Claude Code] 2026-10-31 10:26 UTC — Frontend decisions (dictated answers)
+
+> **Ownership:** I own it, Codex on request (Recommended)
+>
+> **Layout:** One-screen cockpit (Recommended)
+>
+> **Style:** We will decide.
+>
+> **Timing:** Phases 4–5 first, then UI (Recommended)
+>
+> **Models (after bake-off):** 120b@low strong + qwen fast (Recommended)

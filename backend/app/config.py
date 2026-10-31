@@ -23,10 +23,10 @@ class Settings(BaseSettings):
     # LLM
     groq_api_key: str = ""
     groq_model_strong: str = "openai/gpt-oss-120b"
-    groq_model_fast: str = "llama-3.1-8b-instant"
+    groq_model_fast: str = "qwen/qwen3.8-27b"
     groq_model_whisper: str = "whisper-large-v3-turbo"
     # Reasoning effort for models that support it (gpt-oss: low | medium | high). Empty = model default.
-    groq_reasoning_strong: str = ""
+    groq_reasoning_strong: str = "low"
     groq_reasoning_fast: str = ""
     groq_timeout_s: float = 30.0
     groq_max_retries: int = 2  # retries after malformed output or a transient error
