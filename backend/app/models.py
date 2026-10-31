@@ -1,4 +1,4 @@
-"""SQLModel tables. These are storage rows; app/schemas.py holds the wire types from CONTRACT.md.
+"""SQLModel tables. These are storage rows; app/schemas.py holds the wire types.
 
 Only approved work lives here: pending review state lives in the LangGraph checkpoint (Phase 2)
 until it is approved, so memory never contains unconfirmed decisions.

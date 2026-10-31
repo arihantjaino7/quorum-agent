@@ -1,4 +1,4 @@
-"""Guards on the scaffold itself: seed data, contract mirror, agent modules."""
+"""Guards on the scaffold itself: seed data, wire-type mirror, agent modules."""
 
 import importlib
 import inspect
@@ -35,13 +35,13 @@ def test_agent_modules_expose_async_run(name):
     assert inspect.iscoroutinefunction(mod.run)
 
 
-def test_schema_fields_match_contract():
-    """Every field in the Pydantic mirror must be written in CONTRACT.md's type block (drift guard)."""
-    contract = (REPO / "CONTRACT.md").read_text()
+def test_schema_fields_match_frontend_types():
+    """Every field in the Pydantic wire types must also be declared in the frontend's types (drift guard)."""
+    types = (REPO / "frontend" / "src" / "types" / "index.ts").read_text()
     for model in [schemas.Correction, schemas.Decision, schemas.Task, schemas.Conflict, schemas.Question,
                   schemas.Meeting, schemas.ReviewPayload, schemas.AgentEvent, schemas.Ripple,
                   schemas.HeadsUp, schemas.RadarTopic]:
-        block = re.search(rf"type {model.__name__} = \{{(.*?)\n\}};", contract, re.S)
-        assert block, f"type {model.__name__} missing from CONTRACT.md"
+        block = re.search(rf"export (?:interface|type) {model.__name__}\b[^{{]*\{{(.*?)\n\}}", types, re.S)
+        assert block, f"type {model.__name__} missing from frontend/src/types/index.ts"
         for field in model.model_fields:
-            assert re.search(rf"\b{field}\??:", block.group(1)), f"{model.__name__}.{field} not in CONTRACT.md"
+            assert re.search(rf"\b{field}\??:", block.group(1)), f"{model.__name__}.{field} not in the frontend types"

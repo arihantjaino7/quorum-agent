@@ -1,4 +1,4 @@
-"""Pydantic mirror of CONTRACT.md (v1.1). Keep this file and CONTRACT.md in lockstep.
+"""Pydantic wire types of the API. Keep this file and frontend/src/types/index.ts in lockstep.
 
 These are the wire types. Database tables live in models.py, and LLM structured-output
 schemas live next to each agent.

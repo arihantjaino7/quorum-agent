@@ -1,4 +1,4 @@
-/** Quorum CONTRACT.md v1.3 (2026-10-31), owned by the backend. */
+/** Quorum API types, owned by the backend. */
 export type ISODate = string
 export type SourceType = 'voice' | 'transcript' | 'audio'
 
