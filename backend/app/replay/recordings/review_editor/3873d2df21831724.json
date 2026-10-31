@@ -1,0 +1,28 @@
+{
+  "key": "3873d2df21831724f52ce21f9c403ca13e02899c388b063b0e48588b7fb7d3cf",
+  "agent": "review_editor",
+  "tier": "strong",
+  "model": "openai/gpt-oss-120b",
+  "schema": "EditOut",
+  "recorded_at": "2026-10-31T15:00:24Z",
+  "latency_ms": 988,
+  "messages": [
+    {
+      "role": "system",
+      "content": "You turn one spoken instruction into edits on a pending meeting review.\nItems are labelled T1, T2… (tasks) and D1, D2… (decisions). Allowed actions:\nset_owner (value = person), set_due (value = the date as spoken, e.g. \"the 18th\" or \"2026-11-18\"),\nset_title, drop_task, set_statement, drop_decision.\nOnly do what was asked; \"approve\" or \"looks good\" means no edits. Match items by owner, title words or topic.\n\nMeeting date: Saturday 2026-10-31.\nCalendar from the meeting date onward:\n  Sat 2026-10-31  (meeting day)\n  Sun 2026-11-01\n  Mon 2026-11-02\n  Tue 2026-11-03\n  Wed 2026-11-04\n  Thu 2026-11-05\n  Fri 2026-11-06\n  Sat 2026-11-07\n  Sun 2026-11-08\n  Mon 2026-11-09\n  Tue 2026-11-10\n  Wed 2026-11-11\n  Thu 2026-11-12\n  Fri 2026-11-13\n  Sat 2026-11-14\n  Sun 2026-11-15\n  Mon 2026-11-16\n  Tue 2026-11-17\n  Wed 2026-11-18\n  Thu 2026-11-19\n  Fri 2026-11-20\n  Sat 2026-11-21\n  Sun 2026-11-22\n  Mon 2026-11-23\n  Tue 2026-11-24\n  Wed 2026-11-25\n  Thu 2026-11-26\n  Fri 2026-11-27\n  Sat 2026-11-28\n  Sun 2026-11-29\n  Mon 2026-11-30\n  Tue 2026-12-01\n  Wed 2026-12-02\n  Thu 2026-12-03\n  Fri 2026-12-04"
+    },
+    {
+      "role": "user",
+      "content": "TASKS:\n  T1: Rahul · \"Inform beta testers of new launch date\" · due 2026-11-02\nDECISIONS:\n  D1: [launch_date] \"Public launch is moved to 28 November 2026\"\n\nINSTRUCTION: Move the beta testers message to Tuesday"
+    }
+  ],
+  "output": {
+    "ops": [
+      {
+        "action": "set_due",
+        "ref": "T1",
+        "value": "2026-11-03"
+      }
+    ]
+  }
+}

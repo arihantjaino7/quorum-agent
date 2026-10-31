@@ -1,0 +1,70 @@
+{
+  "key": "d366236b58f2f2bd5b9daae18afebf0272260db1dea02755a2a94c31f6c3a592",
+  "agent": "extractor",
+  "tier": "strong",
+  "model": "openai/gpt-oss-120b",
+  "schema": "ExtractorOut",
+  "recorded_at": "2026-10-31T14:58:51Z",
+  "latency_ms": 2345,
+  "messages": [
+    {
+      "role": "system",
+      "content": "You extract decisions and action items from a meeting debrief or transcript.\n\nDecisions:\n- A decision is something the team settled (scope, dates, vendors, priorities), not a task.\n- topic_key: reuse one of the EXISTING TOPIC KEYS below when the decision is about the same subject, even if\n  it reverses it. Otherwise invent a short snake_case key.\n- made_by: attribution matters. \"Rahul said X\" or \"per Rahul, X\" means made_by = \"Rahul\", not the speaker.\n  Credit covers only the decision in that same statement (and its direct consequence, e.g. \"because of that ...\").\n  A later, separate decision phrased as \"we're switching to ...\" or \"we decided ...\" is made by the speaker.\n- statement: one short sentence stating the new state (\"v1 ships on iOS and Android\"), including the final\n  value after any self-correction (\"December 1st, no wait, November 28th\" → 28 Nov).\n\nTasks:\n- One task per concrete commitment with an owner (\"X will/is going to/is taking/I'll ...\"). \"I\" is the speaker.\n- Skip chores that are not project work (office facilities, coffee machines) and anything nobody committed to.\n- due_date: resolve against the meeting date and calendar below. \"Next <weekday>\" = first such weekday after\n  the meeting date; a bare weekday = the next one after the meeting date; \"the 20th\" = next 20th on or after\n  the meeting date. raw_due_phrase keeps the spoken words, fillers included (e.g. \"by, uh, next Wednesday\").\n- depends_on_topic: if the task only makes sense because of one of the decisions you extracted (e.g. redoing\n  onboarding for Android exists because of the platform decision), give that decision's topic_key; else null.\n- source_quote must be copied exactly from the text.\n\nMeeting date: Saturday 2026-10-31.\nCalendar from the meeting date onward:\n  Sat 2026-10-31  (meeting day)\n  Sun 2026-11-01\n  Mon 2026-11-02\n  Tue 2026-11-03\n  Wed 2026-11-04\n  Thu 2026-11-05\n  Fri 2026-11-06\n  Sat 2026-11-07\n  Sun 2026-11-08\n  Mon 2026-11-09\n  Tue 2026-11-10\n  Wed 2026-11-11\n  Thu 2026-11-12\n  Fri 2026-11-13\n  Sat 2026-11-14\n  Sun 2026-11-15\n  Mon 2026-11-16\n  Tue 2026-11-17\n  Wed 2026-11-18\n  Thu 2026-11-19\n  Fri 2026-11-20\n  Sat 2026-11-21\n  Sun 2026-11-22\n  Mon 2026-11-23\n  Tue 2026-11-24\n  Wed 2026-11-25\n  Thu 2026-11-26\n  Fri 2026-11-27\n  Sat 2026-11-28\n  Sun 2026-11-29\n  Mon 2026-11-30\n  Tue 2026-12-01\n  Wed 2026-12-02\n  Thu 2026-12-03\n  Fri 2026-12-04\n\nKNOWN PEOPLE: Ananya, Priya, Rahul\nEXISTING TOPIC KEYS (current decisions):\n  launch_date: Public launch is 20 Nov 2026\n  payments_provider: Payments via Razorpay, not Stripe\n  platform_scope: v1 is iOS only; Android moves to v2\n\nYou get the CLEANED TEXT (use it for meaning and dates) and the ORIGINAL WORDS. Copy source_quote and raw_due_phrase from the ORIGINAL WORDS, verbatim."
+    },
+    {
+      "role": "user",
+      "content": "Speaker: Priya\n\nCLEANED TEXT:\nPriya: Okay, let's get going. This is the Pocket v1 planning sync. Three things to lock today: platform, launch date and payments.\nRahul: On platform, my strong vote is iOS only for v1. We're three engineers. Doing Android properly at the same time doubles QA and we'd ship something mediocre on both.\nAnanya: Agreed from the design side. Our early users skew iPhone anyway, and I'd rather nail one set of onboarding flows.\nPriya: Fine. Decision: v1 is iOS only. Android moves to v2.\nRahul: Good. Then launch date. If we freeze scope this week, the twentieth of November [2026-11-20] is realistic.\nPriya: Let's commit to it. Public launch is November 20th [2026-11-20].\nRahul: Payments next. Stripe is nicer to integrate, but most of our users pay with UPI, and Razorpay handles UPI natively with lower fees in India.\nPriya: Then it's Razorpay, not Stripe, for payments. We can revisit Stripe if we go international.\nAnanya: For my part, I'll have the onboarding screens done by November 3rd [2026-11-03].\nR훌\n\nORIGINAL WORDS:\nPriya: Okay, let's get going. This is the Pocket v1 planning sync. Three things to lock today: platform, launch date and payments.\nRahul: On platform, my strong vote is iOS only for v1. We're three engineers. Doing Android properly at the same time doubles QA and we'd ship something mediocre on both.\nAnanya: Agreed from the design side. Our early users skew iPhone anyway, and I'd rather nail one set of onboarding flows.\nPriya: Fine. Decision: v1 is iOS only. Android moves to v2.\nRahul: Good. Then launch date. If we freeze scope this week, the twentieth of November is realistic.\nPriya: Let's commit to it. Public launch is November 20th.\nRahul: Payments next. Stripe is nicer to integrate, but most of our users pay with UPI, and Razorpay handles UPI natively with lower fees in India.\nPriya: Then it's Razorpay, not Stripe, for payments. We can revisit Stripe if we go international.\nAnanya: For my part, I'll have the onboarding screens done by November 3rd.\nRahul: I'll get a TestFlight build out to the beta group by November 10th.\nPriya: And I'll write the landing page copy by November 6th. Okay, that's everything. Thanks, both."
+    }
+  ],
+  "output": {
+    "decisions": [
+      {
+        "topic_key": "platform_scope",
+        "statement": "v1 is iOS only; Android moves to v2",
+        "made_by": "Priya",
+        "rationale": null,
+        "source_quote": "Fine. Decision: v1 is iOS only. Android moves to v2."
+      },
+      {
+        "topic_key": "launch_date",
+        "statement": "Public launch is November 20th",
+        "made_by": "Priya",
+        "rationale": null,
+        "source_quote": "Let's commit to it. Public launch is November 20th."
+      },
+      {
+        "topic_key": "payments_provider",
+        "statement": "Payments will be via Razorpay",
+        "made_by": "Priya",
+        "rationale": null,
+        "source_quote": "Then it's Razorpay, not Stripe, for payments."
+      }
+    ],
+    "tasks": [
+      {
+        "title": "Complete onboarding screens",
+        "owner": "Ananya",
+        "due_date": "2026-11-03",
+        "raw_due_phrase": "by November 3rd",
+        "source_quote": "I'll have the onboarding screens done by November 3rd.",
+        "depends_on_topic": "platform_scope"
+      },
+      {
+        "title": "Release TestFlight build to beta group",
+        "owner": "Rahul",
+        "due_date": "2026-11-10",
+        "raw_due_phrase": "by November 10th",
+        "source_quote": "I'll get a TestFlight build out to the beta group by November 10th.",
+        "depends_on_topic": null
+      },
+      {
+        "title": "Write landing page copy",
+        "owner": "Priya",
+        "due_date": "2026-11-06",
+        "raw_due_phrase": "by November 6th",
+        "source_quote": "I'll write the landing page copy by November 6th.",
+        "depends_on_topic": "launch_date"
+      }
+    ]
+  }
+}

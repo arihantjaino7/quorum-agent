@@ -1,0 +1,49 @@
+{
+  "key": "90342c3c8e7e6f7427c4b2d8404accee18fb1d448318abfbc4b75b4b1d04da37",
+  "agent": "normalizer",
+  "tier": "fast",
+  "model": "qwen/qwen3.8-27b",
+  "schema": "NormalizerOut",
+  "recorded_at": "2026-10-31T14:58:49Z",
+  "latency_ms": 1683,
+  "messages": [
+    {
+      "role": "system",
+      "content": "You lightly clean a meeting transcript made of \"Name: line\" speaker turns.\n\nRules:\n- Keep EVERY speaker turn, in order, with its \"Name:\" label exactly as written. Never merge, reorder or\n  re-attribute turns. Never paraphrase what someone decided or committed to.\n- Inside turns, remove filler words (um, uh, like, you know). Report them as ONE correction of kind \"filler\"\n  whose original lists the removed words, comma-separated, and whose resolved is \"\".\n- Remove turns or sentences that are pure small talk unrelated to the work. Report each as kind \"digression\".\n- Apply explicit self-corrections (\"X, no wait, Y\" means Y) as kind \"self_correction\".\n- Resolve every relative or partial date (\"next Wednesday\", \"Monday\", \"the 20th\", \"December 1st\") against the\n  meeting date and calendar below. Report each as kind \"date_resolution\": original is the spoken phrase,\n  resolved is \"<weekday> <ISO date>\", e.g. \"Wednesday 2026-11-04\". \"Next <weekday>\" means the first such\n  weekday after the meeting date; a bare weekday means the next one after the meeting date; \"the 20th\" means\n  the next 20th on or after the meeting date.\n- In clean_text append the resolved ISO date in brackets after each date phrase, e.g. \"by November 3rd [2026-11-03]\".\n- Do not invent anything.\n\nMeeting date: Saturday 2026-10-31.\nCalendar from the meeting date onward:\n  Sat 2026-10-31  (meeting day)\n  Sun 2026-11-01\n  Mon 2026-11-02\n  Tue 2026-11-03\n  Wed 2026-11-04\n  Thu 2026-11-05\n  Fri 2026-11-06\n  Sat 2026-11-07\n  Sun 2026-11-08\n  Mon 2026-11-09\n  Tue 2026-11-10\n  Wed 2026-11-11\n  Thu 2026-11-12\n  Fri 2026-11-13\n  Sat 2026-11-14\n  Sun 2026-11-15\n  Mon 2026-11-16\n  Tue 2026-11-17\n  Wed 2026-11-18\n  Thu 2026-11-19\n  Fri 2026-11-20\n  Sat 2026-11-21\n  Sun 2026-11-22\n  Mon 2026-11-23\n  Tue 2026-11-24\n  Wed 2026-11-25\n  Thu 2026-11-26\n  Fri 2026-11-27\n  Sat 2026-11-28\n  Sun 2026-11-29\n  Mon 2026-11-30\n  Tue 2026-12-01\n  Wed 2026-12-02\n  Thu 2026-12-03\n  Fri 2026-12-04"
+    },
+    {
+      "role": "user",
+      "content": "Transcript (uploaded by Priya):\n\nPriya: Okay, let's get going. This is the Pocket v1 planning sync. Three things to lock today: platform, launch date and payments.\nRahul: On platform, my strong vote is iOS only for v1. We're three engineers. Doing Android properly at the same time doubles QA and we'd ship something mediocre on both.\nAnanya: Agreed from the design side. Our early users skew iPhone anyway, and I'd rather nail one set of onboarding flows.\nPriya: Fine. Decision: v1 is iOS only. Android moves to v2.\nRahul: Good. Then launch date. If we freeze scope this week, the twentieth of November is realistic.\nPriya: Let's commit to it. Public launch is November 20th.\nRahul: Payments next. Stripe is nicer to integrate, but most of our users pay with UPI, and Razorpay handles UPI natively with lower fees in India.\nPriya: Then it's Razorpay, not Stripe, for payments. We can revisit Stripe if we go international.\nAnanya: For my part, I'll have the onboarding screens done by November 3rd.\nRahul: I'll get a TestFlight build out to the beta group by November 10th.\nPriya: And I'll write the landing page copy by November 6th. Okay, that's everything. Thanks, both."
+    }
+  ],
+  "output": {
+    "clean_text": "Priya: Okay, let's get going. This is the Pocket v1 planning sync. Three things to lock today: platform, launch date and payments.\nRahul: On platform, my strong vote is iOS only for v1. We're three engineers. Doing Android properly at the same time doubles QA and we'd ship something mediocre on both.\nAnanya: Agreed from the design side. Our early users skew iPhone anyway, and I'd rather nail one set of onboarding flows.\nPriya: Fine. Decision: v1 is iOS only. Android moves to v2.\nRahul: Good. Then launch date. If we freeze scope this week, the twentieth of November [2026-11-20] is realistic.\nPriya: Let's commit to it. Public launch is November 20th [2026-11-20].\nRahul: Payments next. Stripe is nicer to integrate, but most of our users pay with UPI, and Razorpay handles UPI natively with lower fees in India.\nPriya: Then it's Razorpay, not Stripe, for payments. We can revisit Stripe if we go international.\nAnanya: For my part, I'll have the onboarding screens done by November 3rd [2026-11-03].\nR훌",
+    "corrections": [
+      {
+        "original": "the twentieth of November",
+        "resolved": "Friday 2026-11-20",
+        "kind": "date_resolution"
+      },
+      {
+        "original": "November 20th",
+        "resolved": "Friday 2026-11-20",
+        "kind": "date_resolution"
+      },
+      {
+        "original": "November 3rd",
+        "resolved": "Tuesday 2026-11-03",
+        "kind": "date_resolution"
+      },
+      {
+        "original": "November 10th",
+        "resolved": "Tuesday 2026-11-10",
+        "kind": "date_resolution"
+      },
+      {
+        "original": "November 6th",
+        "resolved": "Friday 2026-11-06",
+        "kind": "date_resolution"
+      }
+    ]
+  }
+}
