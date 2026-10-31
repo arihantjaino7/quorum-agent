@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     # Demo safety net
     demo_replay: bool = True
     demo_clock_start: str = "2026-10-31T09:00:00"
+    # In replay mode each agent stays "working" at least this long so the live trace is watchable on stage.
+    replay_step_ms: int = 700
 
     # Integrations
     notion_token: str = ""
@@ -40,6 +42,7 @@ class Settings(BaseSettings):
 
     # Storage
     database_url: str = f"sqlite:///{BACKEND_DIR / 'data' / 'quorum.db'}"
+    checkpoint_db: str = str(BACKEND_DIR / "data" / "checkpoints.db")
     embedding_model: str = "BAAI/bge-small-en-v1.5"
 
     @property

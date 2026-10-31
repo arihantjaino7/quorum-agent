@@ -63,10 +63,10 @@ golden expectations, and the self-enabling golden test.
 - **Test:** reset → 3 active decisions, 3 todo tasks, 3 people; clock round-trips; PATCH task → done.
 - **Unlocks Codex:** dashboards, people, task list, decision list on real data.
 
-### Phase 2: Walking skeleton (risk: LangGraph interrupt + SSE) 🔴
+### ✅ Phase 2: Walking skeleton (risk: LangGraph interrupt + SSE) (done)
 - **Build:** `graph.py` with all 8 nodes as pass-through stubs, SQLite checkpointer, `interrupt()` before
   execution, resume on approve/reject; `services/runs.py` (per-thread event buffer + fan-out, late-join replay);
-  `POST /api/ingest`, `GET /stream`, `GET /review`, `POST /approve`, `POST /reject`.
+  `POST /api/ingest`, `GET /stream`, `GET /review`, `POST /approve`, `POST /reject`, `POST /retry`; replay pacing.
 - **Proves:** the hardest plumbing (pause a graph mid-run for a human, stream every node, resume) works
   before any LLM is involved.
 - **Test:** ingest → stream shows `agent_start`/`agent_end` for each node → `review_ready`; approve resumes to

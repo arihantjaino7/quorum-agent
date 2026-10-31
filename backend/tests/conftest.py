@@ -8,7 +8,10 @@ import pytest
 # Tests always run on replay recordings, never on live Groq (unless marked `live`),
 # on a throwaway database, and with no integration keys (whatever is in the developer's .env).
 os.environ["DEMO_REPLAY"] = "1"
-os.environ["DATABASE_URL"] = f"sqlite:///{Path(tempfile.mkdtemp(prefix='quorum-test-')) / 'test.db'}"
+_tmp = Path(tempfile.mkdtemp(prefix="quorum-test-"))
+os.environ["DATABASE_URL"] = f"sqlite:///{_tmp / 'test.db'}"
+os.environ["CHECKPOINT_DB"] = str(_tmp / "checkpoints.db")
+os.environ["REPLAY_STEP_MS"] = "0"
 for _key in ("GROQ_API_KEY", "NOTION_TOKEN", "NOTION_DATABASE_ID", "GITHUB_TOKEN", "GITHUB_REPO",
              "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"):
     os.environ[_key] = ""
