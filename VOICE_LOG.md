@@ -310,3 +310,7 @@ Make sure to comment and push all the changes whenever you do on GitHub, and do 
 > **Deadline collision:** Due after launch, or already late (Recommended)
 >
 > **Overload:** New + existing open tasks (Recommended)
+
+## [Claude Code] 2026-10-31 11:38 UTC — List UI pages for design references
+
+> so give me listing of the pages that i search and give you reference..
