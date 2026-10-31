@@ -86,6 +86,22 @@ def build_messages(raw_text: str, meeting_date: str, speaker: str,
 _ISO = re.compile(r"\d{4}-\d{2}-\d{2}")
 
 
+_INLINE_DATE = re.compile(r"(?:Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day (\d{4}-\d{2}-\d{2}) \(said: '([^']*)'\)")
+
+
+def _fix_inline_dates(text: str, meeting_date: str) -> str:
+    """The model writes resolved dates into the clean text; re-check each against the deterministic resolver."""
+
+    def fix(m: re.Match) -> str:
+        d = dates.resolve(m.group(2), meeting_date)
+        if d is None or d.isoformat() == m.group(1):
+            return m.group(0)
+        log.info("[normalizer] inline date fixed: %r %s → %s", m.group(2), m.group(1), d.isoformat())
+        return f"{d:%A} {d.isoformat()} (said: '{m.group(2)}')"
+
+    return _INLINE_DATE.sub(fix, text)
+
+
 def postprocess(out: NormalizerOut, raw_text: str, meeting_date: str) -> dict:
     corrections: list[dict] = []
     fillers: list[str] = []
@@ -111,7 +127,7 @@ def postprocess(out: NormalizerOut, raw_text: str, meeting_date: str) -> dict:
         corrections.append(item)
     if fillers:
         corrections.insert(0, {"original": ", ".join(fillers), "resolved": "", "kind": "filler"})
-    clean = out.clean_text.strip() or raw_text
+    clean = _fix_inline_dates(out.clean_text.strip(), meeting_date) or raw_text
     return {"clean_text": clean, "corrections": corrections}
 
 

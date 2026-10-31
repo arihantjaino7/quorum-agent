@@ -1,0 +1,35 @@
+{
+  "key": "95a4fcd9dda81915620b76d670c966fb0fcde5a712042ad09cc49b7aee940e0b",
+  "agent": "conflict_detector",
+  "tier": "strong",
+  "model": "openai/gpt-oss-120b",
+  "schema": "ConflictOut",
+  "recorded_at": "2026-10-31T14:29:05Z",
+  "latency_ms": 943,
+  "messages": [
+    {
+      "role": "system",
+      "content": "You check new meeting decisions against the team's past decisions and flag conflicts.\n\nFor EVERY pair (new decision, past decision) listed, return one judgement:\n- \"reversal\": the new decision changes the value the past decision set on the same subject: a different scope,\n  platform, vendor, owner, OR DATE. A moved date is always a reversal, even by a few days (past \"launch 20 Nov\"\n  vs new \"launch 28 Nov\" = reversal, severity medium). Size goes into severity, never into \"none\".\n- \"contradiction\": the two can't both hold, but it isn't a straight replacement (different subjects that clash).\n- \"none\": the new decision restates the past one, is compatible with it, or is about something unrelated.\n\nSeverity rules (apply exactly):\n- high: reverses scope, platform, vendor or provider, or invalidates work already underway.\n- medium: moves a date or deadline, or amends a decision without overturning it.\n- low: minor clarification. Use low for \"none\" verdicts.\n\naffected_task_refs: the existing open tasks (T labels) whose work was shaped by the PAST decision and now needs a\nsecond look because of the change. Only include tasks clearly affected; empty list if none. Use [] for \"none\".\nexplanation: name what changed and who said it, in one or two plain sentences.\nsuggested_resolution: one concrete next step (who should do what)."
+    },
+    {
+      "role": "user",
+      "content": "Meeting: Launch date update on 2026-10-31, reported by Priya.\n\nPAST DECISIONS:\n  P1 [launch_date] \"Public launch is 20 Nov 2026\" (by Priya, 2026-10-24)\n\nNEW DECISIONS:\n  N1 [launch_date] \"Public launch is moved to 28 November 2026\" (by Priya)\n\nPAIRS TO JUDGE:\n  N1 vs P1\n\nEXISTING OPEN TASKS:\n  T1 Ananya: \"Design onboarding screens\" due 2026-11-03\n  T2 Priya: \"Write landing page copy\" due 2026-11-06\n  T3 Rahul: \"Ship TestFlight build to the beta group\" due 2026-11-10"
+    }
+  ],
+  "output": {
+    "judgements": [
+      {
+        "new_ref": "N1",
+        "past_ref": "P1",
+        "verdict": "reversal",
+        "severity": "medium",
+        "explanation": "The launch was set for 20 Nov 2026 and is now 28 Nov 2026.",
+        "suggested_resolution": "Accept the new date, and move the landing page deadline with it.",
+        "affected_task_refs": [
+          "T2"
+        ]
+      }
+    ]
+  },
+  "curated_note": "Trimmed by hand for the guided example: only the landing page task depends on the launch date, and the wording is simplified."
+}

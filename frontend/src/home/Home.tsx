@@ -204,7 +204,7 @@ export default function Home() {
             </div>
             <label className="sr-only" htmlFor="debrief">Your meeting debrief</label>
             <textarea id="debrief" ref={input} value={text} rows={3} autoFocus spellCheck={false}
-              placeholder="“Rahul said Android is back in v1, launch moves to the 28th, Ananya redoes onboarding by Wednesday…”"
+              placeholder="“The launch is moving from the 20th to the 28th of November…”"
               onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
               onChange={(e) => { setText(e.target.value); if (typing.current) { clearInterval(typing.current); typing.current = null } }}
               onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); submit() } }} />
@@ -286,7 +286,7 @@ export default function Home() {
       exit={{ y: 120, opacity: 0, transition: { duration: 0.4, ease: EASE_IN_OUT } }}>
       <div className="approve-copy">
         <span className="approve-dots">{conflictIds.map((id) => <i key={id} className={resolutions[id] ? 'on' : ''} />)}</span>
-        <div><strong>{!conflictIds.length ? 'No conflicts with memory.' : ready ? 'All conflicts decided.' : `${conflictIds.length - decided} conflict${conflictIds.length - decided > 1 ? 's' : ''} need your call`}</strong>
+        <div><strong>{!conflictIds.length ? 'No conflicts with memory.' : ready ? 'All conflicts decided.' : (conflictIds.length - decided === 1 ? '1 conflict needs your call' : `${conflictIds.length - decided} conflicts need your call`)}</strong>
           <span>{issue ?? 'Nothing is saved or sent until you approve.'}</span></div>
       </div>
       <div className="approve-actions">

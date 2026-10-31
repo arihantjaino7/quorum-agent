@@ -81,6 +81,11 @@ Context for every Claude Code session in this repo. Read this first, then `PLAN_
   origin (`Dockerfile`, `render.yaml`, `DEPLOY.md`). The backend serves `frontend/dist` when present and seeds meeting 1 on
   the first start of an empty database. Free plan: `EMBEDDINGS_ENABLED=0` (topic-only recall), data resets on restart,
   `DEMO_REPLAY=1` stays on, secrets are set in Render's dashboard and never committed.
+- **Guided example (31 Oct, user: "very simple, anyone can understand the conflict"):** the home page's sample is
+  `backend/seed/simple.txt`: "the launch is moving from the 20th to the 28th of November… Rahul, please let the beta
+  testers know by Monday." One decision, one task, one conflict (launch date), one affected task (landing page copy).
+  Its saved conflict answer was trimmed by hand to that single task (see `curated_note` in the recording). debrief2 stays as
+  the full regression test. The normalizer now re-checks dates written inside the clean text.
 
 ## Hackathon
 Product Space × Wispr Flow "Agentic AI Hackathon". Build by voice; the product's main input is speech via Wispr Flow.

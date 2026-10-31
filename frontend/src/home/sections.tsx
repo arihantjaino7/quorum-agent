@@ -114,7 +114,18 @@ function Transcript({ review }: { review: ReviewPayload }) {
 }
 
 const RIPPLE_WORD: Record<Ripple['kind'], string> = { reschedule: 'Move date', rescope: 'Rescope', cancel: 'Cancel', unowned_work: 'Needs an owner' }
-const EXAMPLES = ['Make Rahul’s Play Store date the 18th', 'Drop the investor update', 'Assign the investor update to Ananya']
+/** Suggestions built from this review's own tasks, so they always refer to something that exists. */
+function examplesFor(tasks: { title: string; owner: string | null }[]): string[] {
+  const first = tasks[0]
+  const second = tasks[1] ?? tasks[0]
+  const out: string[] = []
+  if (first) out.push(`Make “${first.title}” due on the 18th`)
+  if (second && second !== first) out.push(`Drop “${second.title}”`)
+  else if (first) out.push(`Drop “${first.title}”`)
+  if (first) out.push(`Assign “${first.title}” to ${first.owner === 'Ananya' ? 'Priya' : 'Ananya'}`)
+  return out
+}
+
 
 function RippleRow({ ripple, on, disabled, onToggle }: { ripple: Ripple; on: boolean; disabled: boolean; onToggle: (apply: boolean) => void }) {
   const p = ripple.proposal
@@ -131,7 +142,7 @@ function RippleRow({ ripple, on, disabled, onToggle }: { ripple: Ripple; on: boo
   </label>
 }
 
-function VoiceEdit({ onEdit, editing, changes, error }: { onEdit: (text: string) => void; editing: boolean; changes: string[]; error: string | null }) {
+function VoiceEdit({ onEdit, editing, changes, error, examples }: { onEdit: (text: string) => void; editing: boolean; changes: string[]; error: string | null; examples: string[] }) {
   const [text, setText] = useState('')
   const send = (value: string) => { if (value.trim() && !editing) { onEdit(value.trim()); setText('') } }
   return <section className="block voice-edit">
@@ -140,10 +151,10 @@ function VoiceEdit({ onEdit, editing, changes, error }: { onEdit: (text: string)
     <Appear className="edit-card">
       <form onSubmit={(e) => { e.preventDefault(); send(text) }}>
         <span className="edit-icon"><AudioLines size={18} /></span>
-        <input value={text} onChange={(e) => setText(e.target.value)} placeholder="“Make Rahul’s date the 18th and drop the investor update”" aria-label="Tell Quorum what to change" />
+        <input value={text} onChange={(e) => setText(e.target.value)} placeholder="“Move the beta testers message to Tuesday”" aria-label="Tell Quorum what to change" />
         <button type="submit" className="run-btn small" disabled={!text.trim() || editing}>{editing ? <LoaderCircle size={15} className="spin" /> : <Send size={15} />}Apply</button>
       </form>
-      <div className="edit-examples">{EXAMPLES.map((e) => <button type="button" key={e} onClick={() => send(e)} disabled={editing}>{e}</button>)}</div>
+      <div className="edit-examples">{examples.map((e) => <button type="button" key={e} onClick={() => send(e)} disabled={editing}>{e}</button>)}</div>
       {error && <p className="error-line" role="alert">{error}</p>}
       {changes.length > 0 && <motion.ul className="edit-changes" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
         {changes.map((c, i) => <li key={i}><Check size={14} />{c}</li>)}</motion.ul>}
@@ -219,6 +230,6 @@ export function Results({ review, resolutions, onResolve, locked, rippleActions,
       </div>
     </section>
 
-    {!locked && <VoiceEdit onEdit={onEdit} editing={editing} changes={changes} error={editError} />}
+    {!locked && <VoiceEdit onEdit={onEdit} editing={editing} changes={changes} error={editError} examples={examplesFor(review.tasks)} />}
   </div>
 }

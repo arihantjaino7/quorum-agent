@@ -1,0 +1,44 @@
+{
+  "key": "9bb59f67f2af122bf338e1b9ada02dd956650ae520fd2c1226a513d6f3ec0367",
+  "agent": "normalizer",
+  "tier": "fast",
+  "model": "qwen/qwen3.8-27b",
+  "schema": "NormalizerOut",
+  "recorded_at": "2026-10-31T14:29:03Z",
+  "latency_ms": 1629,
+  "messages": [
+    {
+      "role": "system",
+      "content": "You clean up a dictated meeting debrief so it can be turned into decisions and tasks.\n\nRules:\n- Remove filler words (um, uh, like, basically, yeah, so). Report them as ONE correction of kind \"filler\"\n  whose original lists the removed words, comma-separated, and whose resolved is \"\".\n- Remove digressions unrelated to the project's decisions or work (office chatter, small talk). Report each as\n  kind \"digression\" with the full digression as original and resolved \"\".\n- Apply self-corrections (\"X, no wait, Y\" means Y). Report each as kind \"self_correction\": original is the\n  spoken phrase including the correction, resolved is the final value.\n- Resolve every relative or partial date (\"next Wednesday\", \"Monday\", \"the 20th\", \"December 1st\") against the\n  meeting date and calendar below. Report each as kind \"date_resolution\": original is the spoken phrase,\n  resolved is \"<weekday> <ISO date>\", e.g. \"Wednesday 2026-11-04\". \"Next <weekday>\" means the first such\n  weekday after the meeting date; a bare weekday means the next one after the meeting date; \"the 20th\" means\n  the next 20th on or after the meeting date.\n- In clean_text keep every decision, task, owner, reason and date; write resolved dates in clean_text as\n  \"<weekday> <ISO date> (said: '<original phrase>')\". Keep the speaker's attributions (\"Rahul said ...\").\n- Do not invent anything. Keep it in the first person of the speaker where they spoke that way.\n\nMeeting date: Saturday 2026-10-31.\nCalendar from the meeting date onward:\n  Sat 2026-10-31  (meeting day)\n  Sun 2026-11-01\n  Mon 2026-11-02\n  Tue 2026-11-03\n  Wed 2026-11-04\n  Thu 2026-11-05\n  Fri 2026-11-06\n  Sat 2026-11-07\n  Sun 2026-11-08\n  Mon 2026-11-09\n  Tue 2026-11-10\n  Wed 2026-11-11\n  Thu 2026-11-12\n  Fri 2026-11-13\n  Sat 2026-11-14\n  Sun 2026-11-15\n  Mon 2026-11-16\n  Tue 2026-11-17\n  Wed 2026-11-18\n  Thu 2026-11-19\n  Fri 2026-11-20\n  Sat 2026-11-21\n  Sun 2026-11-22\n  Mon 2026-11-23\n  Tue 2026-11-24\n  Wed 2026-11-25\n  Thu 2026-11-26\n  Fri 2026-11-27\n  Sat 2026-11-28\n  Sun 2026-11-29\n  Mon 2026-11-30\n  Tue 2026-12-01\n  Wed 2026-12-02\n  Thu 2026-12-03\n  Fri 2026-12-04"
+    },
+    {
+      "role": "user",
+      "content": "Debrief dictated by Priya:\n\nokay quick update, um, the launch is moving from the 20th to the 28th of November, because Apple needs a few more days to review the app. Rahul, please let the beta testers know about the new date by Monday."
+    }
+  ],
+  "output": {
+    "clean_text": "Quick update: the launch is moving from Wednesday 2026-11-25 (said: 'the 20th') to Wednesday 2026-11-25 (said: 'the 28th') because Apple needs a few more days to review the app. Rahul, please let the beta testers know about the new date by Monday 2026-11-02 (said: 'Monday').",
+    "corrections": [
+      {
+        "original": "okay, um",
+        "resolved": "",
+        "kind": "filler"
+      },
+      {
+        "original": "the 20th",
+        "resolved": "Wednesday 2026-11-25",
+        "kind": "date_resolution"
+      },
+      {
+        "original": "the 28th",
+        "resolved": "Wednesday 2026-11-25",
+        "kind": "date_resolution"
+      },
+      {
+        "original": "Monday",
+        "resolved": "Monday 2026-11-02",
+        "kind": "date_resolution"
+      }
+    ]
+  }
+}
