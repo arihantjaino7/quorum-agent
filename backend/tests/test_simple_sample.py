@@ -43,3 +43,11 @@ def test_only_the_landing_page_moves(review):
 def test_dates_in_the_clean_text_are_right(review):
     assert "2026-11-20" in review["clean_text"] and "2026-11-28" in review["clean_text"]
     assert "2026-11-25" not in review["clean_text"]
+
+
+def test_ask_matches_word_forms():
+    from app.services.insights import _words
+
+    assert _words("When are we launching?") & _words("Public launch is 20 Nov 2026")
+    assert _words("Why did we move the launch?") & _words("Public launch is moved to 28 November")
+    assert not (_words("Why did we pick Razorpay?") & _words("Public launch is 20 Nov 2026"))

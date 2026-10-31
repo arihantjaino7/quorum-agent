@@ -188,8 +188,17 @@ _STOP = set("a an and are as at be by did do does for from had has have how i if
             "that the their there they this to was we were what when where which who why will with you your".split())
 
 
+def _stem(word: str) -> str:
+    """Crude stem so "launching", "launched" and "launch" match; "moved" and "move" meet at "mov"."""
+    for suffix in ("ing", "ed", "es", "s", "ly"):
+        if word.endswith(suffix) and len(word) - len(suffix) >= 3:
+            word = word[: -len(suffix)]
+            break
+    return word[:-1] if word.endswith("e") and len(word) > 3 else word
+
+
 def _words(text: str) -> set[str]:
-    return {w for w in re.findall(r"[a-z0-9]+", text.lower()) if w not in _STOP and len(w) > 1}
+    return {_stem(w) for w in re.findall(r"[a-z0-9]+", text.lower()) if w not in _STOP and len(w) > 1}
 
 
 def ask(s: Session, project: str, question: str) -> dict:
